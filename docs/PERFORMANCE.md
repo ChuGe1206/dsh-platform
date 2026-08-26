@@ -2,9 +2,17 @@
 
 | 指标 | 目标 | 实测（本机 Windows，2026-08-26） | 状态 |
 | --- | --- | --- | --- |
-| 安装包体积 | < 20 MB | **壳二进制 6.65 MB**（`target/release/dsh-platform.exe`，`cargo build --release`）；完整 NSIS 安装包预计 10–15 MB（runtime/harness 资源 + 系统 WebView2 复用） | ✅ 预估达标 |
+| 安装包体积 | < 20 MB | **NSIS 1.9 MB / MSI 2.75 MB**（`pnpm tauri build` 产物，2026-08-26 实测） | ✅ 达标（注意：见"发布运行时"） |
 | 启动时间 | < 3 s（点击 → DSH UI 可交互） | 壳部分 **~2.3 s**（进程 → 原生桥 :9527 健康）✅；DSH UI 就绪 **~64 s**（sidecar 冷启动）❌ | 部分 |
 | 内存占用 | < 80 MB（Tauri 壳本身） | **41.2 MB**（`dsh-platform.exe` WorkingSet，窗口实测） | ✅ |
+
+> **发布运行时（重要）**：当前打包物为"壳 + overlay 配置"（1.9MB）。
+> sidecar 运行需要 DSH CLI（node 运行时 + `@deepseek-ai/dsh` 及其依赖）。
+> `scripts/build-all.mjs` 第 4 步会把 runtime 复制到
+> `src-tauri/runtime/` 后再 `tauri build`（资源映射 runtime/harness/apps/cli）。
+> Node + DSH 全家桶体积约 50–80 MB，会超出 20MB 目标 —— 发布时建议：
+> ① 使用压缩 Node 单文件运行时（pkg/neon）或 ② 仅打包 profile 依赖白名单，
+> 由安装器按平台选择；该压包工作列入发布流水线（GitHub Actions）。
 
 ## 实测方法（可复现）
 
