@@ -98,3 +98,9 @@ node scripts/smoke-sidecar.mjs
 - Cordis：https://github.com/cordiverse/cordis
 - Tauri v2：https://tauri.app/
 - 参考实现：https://github.com/anywhere-labs/dsh-desktop
+
+> **开发状态（2026-08）：移动端（Android/iOS）与鸿蒙端开发已暂停** ——
+> 当前机器缺少 Android SDK/NDK、Rust android target 与 DevEco Studio 工具链，
+> 无法进行真机构建/联调。`apps/mobile-*` 与 `apps/harmonyos` 保留为脚手架
+> （代码已纳入类型检查与 cargo workspace 编译验证），工具链就绪后即可恢复推进。
+> 桌面端（Win/macOS/Linux）持续迭代中。

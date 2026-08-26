@@ -20,19 +20,20 @@ node scripts/measure-startup.mjs    # 输出 vite-ready / bridge-ready / dsh-web
 
 1. **壳层达标**：从进程启动到 WebView 挂载 + 原生桥就绪约 2.3s，符合
    "<3s（壳）" 预期；preview 中 41.2MB 内存远低于 80MB 基线。
-2. **DSH UI 就绪受 sidecar 冷启动主导**（~64s：node 进程 + DSH web profile
-   数百插件装载）。<3s 目标需要**预启动/常驻**策略：
-   - 壳启动即并行 spawn sidecar（当前已并行，但 WebView 需等 IPC）；
-     可接受"启动即预热、就绪后自动刷新 iframe"的产品形态；
-   - 安装时生成 profile 快照（`prepare-harness` 已可渲染 overlay，profile
-     boot 缓存依赖 node_modules 安装，建议发布包内置预装 profile）；
-   - 或 sidecar 常驻用户会话（托盘"重启 DSH"已具备 lifecycle 能力）。
-3. **打包体积测量**：release 二进制构建完成后——
-   `cargo build --release -p dsh-platform`（产物 `target/release/dsh-platform.exe`），
-   完整安装包（NSIS/MSI）需 `pnpm tauri build`（需 WiX/NSIS 下载，CI 建议在
-   GitHub Actions 上执行）。harness 源资源（runtime/harness/apps/cli）已列入
-   `tauri.conf.json` bundle.resources；发布时建议只打包 `apps/cli` 构建产物 +
-   node runtime（约 5-10 MB）。
+2. **已落地：sidecar 预启动**（`lib.rs` setup 阶段立即并行拉起 DSH，
+   `start_sidecar` 命令幂等）——窗口出现时 DSH 已在预热，前端挂载即拿
+   到就绪地址；配合托盘"隐藏窗口"常驻模式，用户再次唤回时 DSH 响应
+   为亚秒级。
+3. **DSH UI 首次就绪 ~64s** 为 node + DSH web profile 装载的固有成本，
+   <3s 目标需依赖上述常驻/预启动策略（产品层）——
+   - 安装时生成 profile 快照（prepare-harness 已可渲染 overlay，
+     发布包内置预装 profile 可显著缩短首次启动）；
+   - sidecar 常驻用户会话（托盘"重启 DSH"/隐藏窗口已具备生命周期能力）。
+4. **打包体积测量**：release 二进制 6.65MB；完整安装包（NSIS/MSI）需
+   `pnpm tauri build`（需 WiX/NSIS 下载，CI 建议在 GitHub Actions 上执行）。
+   harness 源资源（runtime/harness/apps/cli）已列入 `tauri.conf.json`
+   bundle.resources；发布时建议只打包 `apps/cli` 构建产物 + node runtime
+   （约 5-10 MB）。
 
 ## 基线数据（本机记录）
 

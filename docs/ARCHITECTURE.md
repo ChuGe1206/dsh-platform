@@ -37,10 +37,12 @@
 
 ```
 (pnpm tauri dev / 发布包)
+ 0. 预启动：Rust setup 阶段即并行 spawn sidecar（不等前端）；
+    start_sidecar 命令幂等 —— 前端挂载后立即拿到已就绪地址。
  1. Tauri Rust setup：
     · bridge::spawn() → 原生桥监听 127.0.0.1:9527（CORS + BridgeResponse）
     · tray::create()  → 系统托盘（显示/隐藏/重启 DSH/退出，双击聚焦）
- 2. 前端 App.vue → useSidecar.start() → invoke('start_sidecar')
+ 2. 前端 App.vue → useSidecar.start() → invoke('start_sidecar')（返回既存 URL）
  3. Rust spawn sidecar：
     node <cli> web --patch <root>/config/desktop-overlay.generated.yml
        --host 127.0.0.1 --port 0 --no-open

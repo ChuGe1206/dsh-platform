@@ -92,6 +92,8 @@ impl DSHSidecar {
 
     /// Start the sidecar and wait for the ready line.
     /// **Blocking**: callers must wrap in `tauri::async_runtime::spawn_blocking`.
+    /// Idempotent: returns the running URL when already started (pre-start in
+    /// setup + eager frontend invocation must not double-spawn).
     pub fn start(&mut self, app: &AppHandle) -> Result<String, String> {
         if let Some(url) = &self.url {
             if self.is_running() {

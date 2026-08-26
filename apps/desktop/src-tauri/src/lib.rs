@@ -14,6 +14,7 @@ pub mod sidecar;
 pub mod tray;
 
 use std::sync::{Arc, Mutex};
+use tauri::Manager;
 
 pub type SidecarHandle = Arc<Mutex<sidecar::DSHSidecar>>;
 
@@ -47,6 +48,27 @@ pub fn run() {
         ])
         .setup(|app| {
             bridge::spawn(app.handle().clone());
+
+            // 预启动 sidecar：不等前端 WebView 加载完成，Rust 层立即并行拉起
+            // DSH —— start_sidecar 命令幂等（已启动则直接返回 URL），
+            // 前端挂载后即刻拿到就绪地址（启动体验优化，见 docs/PERFORMANCE.md）。
+            {
+                let handle = app.state::<SidecarHandle>().inner().clone();
+                let app_handle = app.handle().clone();
+                #[cfg(desktop)]
+                std::thread::spawn(move || {
+                    let mut guard = match handle.lock() {
+                        Ok(guard) => guard,
+                        Err(poisoned) => poisoned.into_inner(),
+                    };
+                    if !guard.is_running() {
+                        if let Err(error) = guard.start(&app_handle) {
+                            eprintln!("[sidecar] 预启动失败: {error}");
+                        }
+                    }
+                });
+            }
+
             #[cfg(desktop)]
             tray::create(app)?;
             Ok(())
