@@ -15,12 +15,12 @@
   inset: 0;
 }
 
-/* 后浪(最浅,最高)。 */
+/* 后浪(最浅,波峰偏左)。 */
 .splash__wave--back {
   clip-path: path(
-    "M0 300 L0 150 C60 110 120 100 180 116 C240 132 300 124 360 114 C420 104 460 118 480 126 L480 300 Z"
+    "M0 300 L0 160 C60 136 120 128 160 132 C210 136 260 150 320 148 C380 146 430 134 480 140 L480 300 Z"
   );
-  background: linear-gradient(180deg, rgba(222, 244, 255, 0.95) 0%, rgba(150, 206, 245, 0.72) 100%);
+  background: linear-gradient(180deg, rgba(222, 244, 255, 0.96) 0%, rgba(150, 206, 245, 0.74) 100%);
   z-index: 1;
 }
 
@@ -29,8 +29,8 @@
   position: absolute;
   left: 40px;
   top: 96px;
-  width: 104px;
-  height: 76px;
+  width: 100px;
+  height: 74px;
   color: #2f7fe0;
   filter: drop-shadow(0 6px 12px rgba(31, 111, 224, 0.25));
   transform: rotate(-12deg);
@@ -38,21 +38,21 @@
   animation: splash-float 2.6s ease-in-out infinite;
 }
 
-/* 中浪(遮住鲸鱼下半身)。 */
+/* 中浪(遮住鲸鱼下半身,波峰偏右——与后浪错位)。 */
 .splash__wave--mid {
   clip-path: path(
-    "M0 300 L0 196 C70 168 140 160 210 173 C280 186 340 172 410 164 C450 160 470 166 480 170 L480 300 Z"
+    "M0 300 L0 192 C80 180 160 172 240 176 C300 179 330 158 360 162 C420 166 450 174 480 176 L480 300 Z"
   );
-  background: linear-gradient(180deg, rgba(150, 206, 245, 0.8) 0%, rgba(88, 156, 220, 0.78) 100%);
+  background: linear-gradient(180deg, rgba(150, 206, 245, 0.82) 0%, rgba(88, 156, 220, 0.8) 100%);
   z-index: 3;
 }
 
-/* 前浪(最深)。 */
+/* 前浪(最深,波峰居中——再与中浪错位)。 */
 .splash__wave--front {
   clip-path: path(
-    "M0 300 L0 236 C90 212 170 210 250 224 C330 238 410 226 480 214 L480 300 Z"
+    "M0 300 L0 218 C100 204 180 190 210 194 C280 200 360 210 430 208 L480 210 L480 300 Z"
   );
-  background: linear-gradient(180deg, rgba(58, 116, 186, 0.85) 0%, rgba(30, 72, 130, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(58, 116, 186, 0.86) 0%, rgba(30, 72, 130, 0.92) 100%);
   z-index: 4;
 }
 
