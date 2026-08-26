@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/shared-bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Shared HTTP/WS bridge protocol between the dsh-platform WebViews and native shells (Tauri / ArkWeb).",

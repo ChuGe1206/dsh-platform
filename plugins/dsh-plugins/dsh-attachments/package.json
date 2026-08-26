@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/dsh-attachments",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Attachment management for dsh-platform: file-drop handling plus attachment tools (add/list/remove).",

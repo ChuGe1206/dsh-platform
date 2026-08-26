@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/mobile-ios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "dsh-platform iOS shell (Tauri Mobile) — remote-client mode. Shares the mobile-android frontend sources (Phase 4 scaffold).",

@@ -20,7 +20,22 @@
         "minHeight": 480,
         "decorations": false,
         "center": true,
-        "resizable": true
+        "resizable": true,
+        "visible": false
+      },
+      {
+        "label": "splash",
+        "title": "DSH Platform",
+        "width": 260,
+        "height": 206,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "center": true,
+        "visible": true,
+        "shadow": false,
+        "skipTaskbar": true
       }
     ],
     "security": {

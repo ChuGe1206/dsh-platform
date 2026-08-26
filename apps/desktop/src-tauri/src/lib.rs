@@ -10,6 +10,7 @@
 pub mod bridge;
 pub mod commands;
 pub mod sidecar;
+pub mod version;
 #[cfg(desktop)]
 pub mod tray;
 

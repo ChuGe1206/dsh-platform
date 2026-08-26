@@ -58,20 +58,35 @@
   gap: 4px;
 }
 .titlebar__button {
-  width: 42px;
-  height: 28px;
+  width: 46px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
   color: var(--dsh-text-secondary);
   border-radius: var(--dsh-radius-s);
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .titlebar__button:hover {
   background: var(--dsh-bg-input);
+  color: var(--dsh-text);
+}
+.titlebar__button:active {
+  background: var(--dsh-bg-input);
+}
+.titlebar__button svg {
+  display: block;
+  flex: none;
 }
 .titlebar__button--close:hover {
   background: var(--dsh-danger);
   color: #fff;
+}
+.titlebar__button--close:active {
+  background: #b71c1c;
 }
 
 /* ---- HarnessFrame ---- */

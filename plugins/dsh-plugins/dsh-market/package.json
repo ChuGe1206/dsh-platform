@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/dsh-market",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Plugin discovery and one-command installation against a dsh-platform plugin registry (external-plugins.json format).",

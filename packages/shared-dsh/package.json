@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/shared-dsh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "DSH integration for dsh-platform: sidecar spawn, overlay patch loading, plugin registry, remote client.",

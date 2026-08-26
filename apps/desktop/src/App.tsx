@@ -48,6 +48,23 @@ export default function App() {
     }
   }, [start, stateReady, setTheme])
 
+  // Sidecar 就绪(或失败)后：显示主窗口并关闭 splash 启动窗口。
+  useEffect(() => {
+    if (state !== 'ready' && state !== 'error') return
+    void (async () => {
+      try {
+        const { getCurrentWindow, getAllWindows } = await import('@tauri-apps/api/window')
+        const main = getCurrentWindow()
+        await main.show()
+        await main.setFocus()
+        const splash = (await getAllWindows()).find((w) => w.label === 'splash')
+        await splash?.hide()
+      } catch {
+        /* outside Tauri */
+      }
+    })()
+  }, [state])
+
   return (
     <div className="shell" data-theme={applied}>
       <TitleBar state={state} dshUrl={url} />

@@ -1,5 +1,21 @@
 # 变更日志（中文）
 
+## 2026-08-29 — 启动窗口 / 标题栏按钮 / 版本统一
+
+- **新增精美异形启动窗口(splash)**：主窗口启动时先隐藏,另开一个小尺寸(260×206)、
+  居中、透明无边框、置顶的 `splash` 窗口,内含鲸鱼品牌+加载动画的圆角卡片视觉
+  (`transparent`+`decorations:false` 在透明窗口上只显示圆角内容,形成"异形"外观)。
+  DSH sidecar 就绪或失败后,前端显示主窗口并关闭 splash。
+- **重构标题栏右上角按钮**：最小化/最大化/关闭改为**统一尺寸的 SVG 图标**
+  (46×30,居中),最大化在已最大化时自动切换为"还原"图标,关闭按钮红底悬停,
+  统一 hover/active 过渡。
+- **版本号统一到单一来源**：新增 `config/version.json`(app/dsh 两值)与
+  `scripts/sync-version.mjs`(`pnpm sync:version`)——把 `app` 写入根/各 workspace
+  的 package.json、各 app 的 tauri.conf.json、Cargo.toml(workspace+shared-rust);
+  把 `dsh` 写入根 package.json 的 `@deepseek-ai/dsh` 并生成
+  `apps/desktop/src-tauri/src/version.rs`。`install_runtime` 改用 `version::DSH_VERSION`,
+  不再写死;同步脚本"就地替换"版本值,不改动其它格式,避免触发 pnpm 全树清理。
+
 ## 2026-08-29 — 前端 Vue → React 迁移 + 启动黑框修复
 
 - **前端框架 Vue 3 → React 18**：`packages/shared-ui`（3 组件 + 3 hooks）与

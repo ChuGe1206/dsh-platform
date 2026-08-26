@@ -1,6 +1,6 @@
 {
   "name": "@dsh-platform/harmonyos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "dsh-platform HarmonyOS NEXT shell (ArkTS + ArkWeb) — remote mode with HMS Push bridge.",

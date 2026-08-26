@@ -1,6 +1,6 @@
 {
   "name": "dsh-platform",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Cross-platform desktop / mobile / HarmonyOS shell for DeepSeek Harness (DSH) — zero source intrusion, Cordis patch injection only.",
   "type": "module",
@@ -15,6 +15,7 @@
     "dev:web": "pnpm --filter @dsh-platform/shared-ui dev",
     "prepare:harness": "node scripts/prepare-harness.mjs",
     "prepare:external": "node scripts/prepare-external-plugins.mjs",
+    "sync:version": "node scripts/sync-version.mjs",
     "build:all": "node scripts/build-all.mjs",
     "publish:harmony": "node scripts/publish-harmony.mjs",
     "smoke:sidecar": "node scripts/smoke-sidecar.mjs"

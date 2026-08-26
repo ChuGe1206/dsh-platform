@@ -55,8 +55,8 @@ pub async fn install_runtime(app: AppHandle, version: Option<String>) -> Result<
         .ok()
         .filter(|value| !value.trim().is_empty())
         .unwrap_or_else(|| "npm".to_string());
-    // 与仓库依赖一致的 DSH CLI 版本（见 HARNESS_UPSTREAM.md / 根 package.json）
-    let spec = version.unwrap_or_else(|| "0.1.1-rc.2".to_string());
+    // 与仓库依赖一致的 DSH CLI 版本（单一来源：config/version.json → version.rs）
+    let spec = version.unwrap_or_else(|| crate::version::DSH_VERSION.to_string());
 
     let npm_args = [
         "install".to_string(),
