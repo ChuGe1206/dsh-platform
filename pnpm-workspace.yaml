@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+  - plugins/dsh-plugins/*
+  - plugins/native-plugins-desktop/*
+  - plugins/native-plugins-mobile/*
+  - plugins/native-plugins-harmony/*
+allowBuilds:
+  '@deepseek-ai/dsh-subprocess-local': true
+  '@google/genai': true
+  esbuild: true
+  koffi: true
+  node-pty: true
+  protobufjs: true

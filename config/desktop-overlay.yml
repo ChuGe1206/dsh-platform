@@ -1,0 +1,45 @@
+# config/desktop-overlay.yml — 桌面端启动时注入的插件配置（模板）。
+#
+# 行内 `name: ./plugins/…` 为仓库根相对路径；DSH loader 只认绝对模块
+# 说明符（相对路径会解析到 $DSH_HOME/profiles/web/ 之下），因此
+# `pnpm prepare:harness` 会把本模板渲染成 desktop-overlay.generated.yml
+# （绝对路径版），sidecar 使用生成文件。
+#
+# 兼容：dsh web --patch config/desktop-overlay.yml（未渲染时警告并回退）
+
+- insert:
+    - id: desktop-bridge
+      name: ./plugins/dsh-plugins/desktop-bridge
+      config:
+        mode: local
+        native_port: 9527
+        debounce_ms: 1500
+
+- insert:
+    - id: dsh-attachments
+      name: ./plugins/dsh-plugins/dsh-attachments
+      config:
+        max_file_size: 104857600  # 100MB
+        allowed_extensions: ['.txt', '.md', '.js', '.ts', '.py', '.json', '.tsx', '.vue', '.rs']
+
+- insert:
+    - id: dsh-session-backup
+      name: ./plugins/dsh-plugins/dsh-session-backup
+      config:
+        interval: 300000  # 5分钟
+        max_backups: 50
+        compress: true
+
+- insert:
+    - id: dsh-market
+      name: ./plugins/dsh-plugins/dsh-market
+      config:
+        registry_url: 'https://registry.dsh.example.com'
+        profile: web
+
+- insert:
+    - id: dsh-lan-access
+      name: ./plugins/dsh-plugins/dsh-lan-access
+      config:
+        advertise: true
+        advertise_interval: 60000

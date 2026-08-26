@@ -1,0 +1,39 @@
+{
+  "$comment": "ds h-platform external plugin registry. Entries may point at git URLs or sibling directories. `platforms` = [desktop, mobile, harmonyos]. `enabled: false` entries are skipped by prepare-external-plugins.mjs.",
+  "registry": "https://registry.dsh.example.com",
+  "plugins": [
+    {
+      "id": "dsh-plugin-desktop",
+      "package": "@dsh/dsh-plugin-desktop",
+      "source": {
+        "type": "dir",
+        "path": "../deepseek-harness-desktop/dsh-plugin-desktop"
+      },
+      "platforms": ["desktop"],
+      "enabled": true,
+      "description": "Community desktop plugin set (notifications, dock, tray helpers) used as the reference external plugin for dsh-lan-access experiments."
+    },
+    {
+      "id": "dsh-community-market",
+      "package": "dsh-community-market",
+      "source": {
+        "type": "dir",
+        "path": "../deepseek-harness-desktop/dsh-community-market"
+      },
+      "platforms": ["desktop"],
+      "enabled": false,
+      "description": "Community plugin marketplace catalog; disabled until its build toolchain matches this repo's node version."
+    },
+    {
+      "id": "dsh-community-fabric",
+      "package": "dsh-community-fabric",
+      "source": {
+        "type": "dir",
+        "path": "../deepseek-harness-desktop/dsh-community-fabric"
+      },
+      "platforms": ["desktop"],
+      "enabled": true,
+      "description": "Agent fabric prompts loaded through a profile bundle patch layer."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[package]
+name = "dsh-platform-mobile-ios"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "dsh-platform iOS shell (Tauri Mobile) — Phase 4 scaffold; shares mobile-android bridge design."
+
+[lib]
+name = "dsh_platform_mobile_ios"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-notification = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tiny_http = "0.12"
+shared-rust = { path = "../../../packages/shared-rust" }

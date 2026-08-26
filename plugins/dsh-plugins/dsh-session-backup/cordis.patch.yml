@@ -1,0 +1,7 @@
+- insert:
+    - id: dsh-session-backup
+      name: '@dsh-platform/dsh-session-backup'
+      config:
+        interval: 300000
+        max_backups: 50
+        compress: true

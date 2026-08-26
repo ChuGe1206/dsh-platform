@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-attachments
+      name: '@dsh-platform/dsh-attachments'
+      config:
+        max_file_size: 104857600
+        allowed_extensions: ['.txt', '.md', '.js', '.ts', '.py', '.json', '.tsx', '.vue', '.rs']

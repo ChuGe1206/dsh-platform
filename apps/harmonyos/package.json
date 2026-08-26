@@ -1,0 +1,29 @@
+{
+  "name": "@dsh-platform/harmonyos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "dsh-platform HarmonyOS NEXT shell (ArkTS + ArkWeb) — remote mode with HMS Push bridge.",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "dev": "vite --host 127.0.0.1 --port 1480"
+  },
+  "dependencies": {
+    "@dsh-platform/native-distributed-softbus": "workspace:*",
+    "@dsh-platform/native-file-access": "workspace:*",
+    "@dsh-platform/native-harmony-bridge": "workspace:*",
+    "@dsh-platform/native-hms-push": "workspace:*",
+    "@dsh-platform/shared-bridge": "workspace:*",
+    "@dsh-platform/shared-dsh": "workspace:*",
+    "@dsh-platform/shared-ui": "workspace:*",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vue-tsc": "^2.2.10"
+  }
+}
