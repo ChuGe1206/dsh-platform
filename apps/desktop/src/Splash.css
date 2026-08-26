@@ -8,7 +8,7 @@
   user-select: none;
 }
 
-/* 主浪:clip-path 裁出波浪峰(左高右缓),半透明渐变。鲸鱼浸水部分被其覆盖变淡。 */
+/* 主浪:clip-path 裁出波浪峰(左高右缓),半透明渐变。 */
 .splash__glass {
   position: absolute;
   inset: 0;
@@ -20,15 +20,15 @@
   -webkit-app-region: drag;
 }
 
-/* 鲸鱼:放低使其约1/3浸入浪面(浸水部分被主浪覆盖变淡),呈破水姿态。 */
+/* 鲸鱼:完整画在浪之上,基座落于浪峰(不被浪裁切),呈跃出姿态。 */
 .splash__whale {
   position: absolute;
-  left: 34px;
-  top: 58px;
-  width: 104px;
-  height: 76px;
+  left: 40px;
+  top: 30px;
+  width: 100px;
+  height: 74px;
   color: #2f7fe0;
-  filter: drop-shadow(0 8px 16px rgba(31, 111, 224, 0.3));
+  filter: drop-shadow(0 6px 12px rgba(31, 111, 224, 0.25));
   transform: rotate(-12deg);
   animation: splash-float 2.6s ease-in-out infinite;
 }
@@ -44,15 +44,15 @@
   fill: rgba(255, 255, 255, 0.85);
 }
 
-/* 破水泡沫:画在主浪之上,包住鲸鱼与水面交界处,把两者连成一体。 */
+/* 破水泡沫:鲸鱼基座处的泡沫丘 + 上溅水珠,与鲸鱼基座相接(不覆盖身体)。 */
 .splash__foam {
   position: absolute;
-  left: 22px;
-  top: 96px;
+  left: 24px;
+  top: 92px;
   width: 150px;
-  height: 34px;
-  color: rgba(255, 255, 255, 0.95);
-  fill: rgba(255, 255, 255, 0.95);
+  height: 40px;
+  color: rgba(255, 255, 255, 0.96);
+  fill: rgba(255, 255, 255, 0.96);
   opacity: 0.98;
 }
 
