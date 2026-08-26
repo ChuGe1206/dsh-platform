@@ -1,5 +1,4 @@
-/* Splash — 透明窗口内绘制"海浪剪影"异形玻璃卡。窗口之外透明,只有海浪形状可见。
-   采用纯半透明渐变(无 backdrop-filter),让桌面透过 rgba 渐变呈现通透感。 */
+/* Splash — 透明窗口内的海浪异形场景。窗口之外透明,只有海浪+鲸鱼可见。 */
 
 .splash {
   position: fixed;
@@ -9,41 +8,52 @@
   user-select: none;
 }
 
-/* 海浪剪影:clip-path 裁出不规则海浪上沿,半透明渐变(上浅下深海蓝)。 */
+/* 主浪:clip-path 裁出波浪峰(左高右缓),半透明渐变。鲸鱼浸水部分被其覆盖变淡。 */
 .splash__glass {
   position: absolute;
   inset: 0;
   clip-path: path(
-    "M0 300 L0 172 C30 132 78 112 126 122 C160 128 186 152 230 154 C274 156 302 134 340 132 C384 128 432 146 480 160 L480 300 Z"
+    "M0 300 L0 150 C22 118 60 100 100 104 C136 108 156 130 200 134 C244 138 268 116 306 112 C350 108 398 128 480 150 L480 300 Z"
   );
-  background: linear-gradient(172deg, rgba(233, 247, 255, 0.9) 0%, rgba(176, 222, 255, 0.68) 42%, rgba(96, 162, 228, 0.74) 78%, rgba(56, 118, 190, 0.82) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -50px 70px -45px rgba(32, 82, 144, 0.55);
+  background: linear-gradient(172deg, rgba(216, 242, 255, 0.92) 0%, rgba(150, 205, 245, 0.66) 45%, rgba(72, 140, 208, 0.78) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -60px 80px -50px rgba(32, 82, 144, 0.5);
   -webkit-app-region: drag;
 }
 
-/* 鲸鱼:放低使其下半浸入浪面,呈跃浪/破水姿态。 */
+/* 鲸鱼:放低使其约1/3浸入浪面(浸水部分被主浪覆盖变淡),呈破水姿态。 */
 .splash__whale {
   position: absolute;
-  left: 40px;
-  top: 56px;
-  width: 96px;
-  height: 70px;
-  color: #1f6fe0;
-  filter: drop-shadow(0 8px 14px rgba(31, 111, 224, 0.33));
-  transform: rotate(-16deg);
+  left: 34px;
+  top: 58px;
+  width: 104px;
+  height: 76px;
+  color: #2f7fe0;
+  filter: drop-shadow(0 8px 16px rgba(31, 111, 224, 0.3));
+  transform: rotate(-12deg);
   animation: splash-float 2.6s ease-in-out infinite;
 }
 
-/* 浪花/水线:鲸鱼跃出水面的破水光点与水线。 */
-.splash__spray {
+/* 空气星光。 */
+.splash__sparkles {
   position: absolute;
-  left: 30px;
-  top: 122px;
-  width: 140px;
-  height: 48px;
-  color: rgba(255, 255, 255, 0.92);
-  fill: rgba(255, 255, 255, 0.92);
-  opacity: 0.96;
+  left: 24px;
+  top: 18px;
+  width: 200px;
+  height: 90px;
+  color: rgba(255, 255, 255, 0.85);
+  fill: rgba(255, 255, 255, 0.85);
+}
+
+/* 破水泡沫:画在主浪之上,包住鲸鱼与水面交界处,把两者连成一体。 */
+.splash__foam {
+  position: absolute;
+  left: 22px;
+  top: 96px;
+  width: 150px;
+  height: 34px;
+  color: rgba(255, 255, 255, 0.95);
+  fill: rgba(255, 255, 255, 0.95);
+  opacity: 0.98;
 }
 
 /* 品牌文案(居中于浪体)。 */
@@ -56,19 +66,19 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  color: #10365f;
+  color: #0f3a68;
   -webkit-app-region: drag;
 }
 .splash__brand {
   font-size: 21px;
   font-weight: 800;
   letter-spacing: 0.4px;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 .splash__tagline {
   font-size: 11px;
   letter-spacing: 3px;
-  color: rgba(16, 54, 95, 0.66);
+  color: rgba(15, 58, 104, 0.66);
   text-transform: uppercase;
 }
 .splash__loader {
@@ -82,7 +92,7 @@
 .splash__spinner {
   width: 18px;
   height: 18px;
-  border: 2.5px solid rgba(16, 54, 95, 0.22);
+  border: 2.5px solid rgba(15, 58, 104, 0.22);
   border-top-color: #1f6fe0;
   border-radius: 50%;
   animation: splash-spin 0.9s linear infinite;
@@ -96,9 +106,9 @@
 @keyframes splash-float {
   0%,
   100% {
-    transform: rotate(-16deg) translateY(0);
+    transform: rotate(-12deg) translateY(0);
   }
   50% {
-    transform: rotate(-12deg) translateY(-9px);
+    transform: rotate(-9deg) translateY(-6px);
   }
 }
