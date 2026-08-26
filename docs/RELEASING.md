@@ -30,5 +30,9 @@ git push origin v0.1.1    # 推送 tag → GitHub Actions release.yml 自动触�
 ## 版本语义
 
 - patch 版本 = 修复/文档/引导链路等增量（如 v0.1.1）
+- **打 tag 前先同步版本号**：`apps/desktop/package.json`、
+  `apps/desktop/src-tauri/tauri.conf.json`（bundle 文件名/内部版本）与
+  根 `Cargo.toml [workspace.package].version` —— 否则安装包文件名沿用旧版本
+  （实测：v0.1.1 tag 的产物文件名为 `dsh-platform_0.1.0_x64-setup.exe`）。
 - 每次发布前 `pnpm prepare:harness` 已验证（CI 强制）
 - 签名公钥配置后（见 docs/UPGRADING.md）自动带 auto-updater 签名
