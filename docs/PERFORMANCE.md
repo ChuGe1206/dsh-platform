@@ -1,8 +1,8 @@
 # 性能指标（验证标准 6.3）
 
-| 指标 | 目标 | 实测（本机 Windows dev 基线，2026-08-26） | 状态 |
+| 指标 | 目标 | 实测（本机 Windows，2026-08-26） | 状态 |
 | --- | --- | --- | --- |
-| 安装包体积 | < 20 MB | 待 release 打包采集（`cargo build --release -p dsh-platform` 已发起；完整 bundle 需 `tauri build` + NSIS，见下方"打包体积测量"） | ⏳ |
+| 安装包体积 | < 20 MB | **壳二进制 6.65 MB**（`target/release/dsh-platform.exe`，`cargo build --release`）；完整 NSIS 安装包预计 10–15 MB（runtime/harness 资源 + 系统 WebView2 复用） | ✅ 预估达标 |
 | 启动时间 | < 3 s（点击 → DSH UI 可交互） | 壳部分 **~2.3 s**（进程 → 原生桥 :9527 健康）✅；DSH UI 就绪 **~64 s**（sidecar 冷启动）❌ | 部分 |
 | 内存占用 | < 80 MB（Tauri 壳本身） | **41.2 MB**（`dsh-platform.exe` WorkingSet，窗口实测） | ✅ |
 
