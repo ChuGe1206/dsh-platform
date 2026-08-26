@@ -106,6 +106,6 @@
 | 6.1 验证 2（DSH 启动） | ✅ 实机通过 | tauri dev 完整时序（窗口/桥/sidecar/UI 200） |
 | 6.1 验证 3（插件注入） | ✅（替代证据） | /api/plugins 404 → 桥 POST /status 流量 |
 | 6.1 验证 4（桥接通信） | ✅ | 桥健康 200 + 通知路由实现 |
-| 6.1 验证 5（热重载） | ⚠️ 文档化 | DSH 官方 web profile 禁用 hmr；用 restart 替代 |
+| 6.1 验证 5（热重载） | ⚠️ 文档化 | 实测：overlay 覆盖 `- id: hmr / disabled: false` 可无副作用启用，但 20s 观察期未捕获任何 reload/hmr 输出（官方也注明该 HMR 生命周期未测试）；已回退官方基线，用 restart 替代（`restart_sidecar` / 托盘"重启 DSH"） |
 | 6.2 代码质量 | ✅ | cargo check/clippy(0 警告)/test(3)、tsc 24/24、harness diff 空 |
 | 6.3 性能指标 | 部分 | 内存 41.2MB ✅；体积/启动时间需 release 打包采集（docs/PERFORMANCE.md） |
