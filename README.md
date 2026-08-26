@@ -1,5 +1,8 @@
 # dsh-platform
 
+[![CI](https://github.com/ChuGe1206/dsh-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/ChuGe1206/dsh-platform/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/ChuGe1206/dsh-platform)](https://github.com/ChuGe1206/dsh-platform/releases)
+
 基于 DeepSeek Harness (DSH) 的跨端桌面 / 移动 / 鸿蒙客户端壳。DSH 源码以 git submodule 方式挂载（`harness/`，只读，零源码侵入），所有扩展通过 Cordis patch 注入。
 
 ## 核心架构
