@@ -303,8 +303,13 @@ fn resolve_overlay(root: &Path) -> Option<PathBuf> {
     None
 }
 
+/// Sidecar 专属 DSH_HOME：默认 `<app_data_dir>/dsh-home`。
+///
+/// 注意：**不继承父进程的 `DSH_HOME`** —— 若壳从另一个 DSH 会话（或 dsh CLI）
+/// 中被启动，继承会与本机真实 profile 目录冲突（双进程写同一 profile）。
+/// 测试/自定义路径请用独立变量 `DSH_PLATFORM_HOME`。
 fn resolve_dsh_home(app: &AppHandle) -> Result<PathBuf, String> {
-    if let Ok(explicit) = std::env::var("DSH_HOME") {
+    if let Ok(explicit) = std::env::var("DSH_PLATFORM_HOME") {
         if !explicit.trim().is_empty() {
             return Ok(PathBuf::from(explicit));
         }
