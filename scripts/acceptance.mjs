@@ -13,9 +13,10 @@
  * 用法：node scripts/acceptance.mjs [--skip-smoke]
  */
 import { spawnSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { load } from 'js-yaml'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(__dirname, '..')
@@ -59,6 +60,26 @@ const keyFiles = [
 ]
 const filesOk = keyFiles.every((file) => existsSync(join(repoRoot, file)))
 results.push({ name: '结构完整性（关键文件存在）', ok: filesOk, detail: keyFiles.join(', ') })
+
+// Workflow 静态校验（防止手改失误破坏 CI/发布）
+{
+  try {
+    const ci = load(readFileSync(join(repoRoot, '.github/workflows/ci.yml'), 'utf8'))
+    const release = load(readFileSync(join(repoRoot, '.github/workflows/release.yml'), 'utf8'))
+    const ciSteps = ((ci?.jobs?.desktop?.steps) ?? []).map((step) => step.name ?? '')
+    const check = (list, needle) => list.some((name) => String(name).includes(needle))
+    const ok =
+      ci !== null && release !== null &&
+      check(ciSteps, 'TypeScript') && check(ciSteps, 'clippy') && check(ciSteps, '冒烟') &&
+      release?.on?.workflow_dispatch !== undefined &&
+      (release?.on?.push?.tags ?? []).includes('v*') &&
+      check((release?.jobs?.['package-windows']?.steps ?? []).map((s) => s.name ?? ''), '上传安装包产物') &&
+      check((release?.jobs?.['package-windows']?.steps ?? []).map((s) => s.name ?? ''), '发布 GitHub Release')
+    results.push({ name: 'CI/发布 workflow 结构校验', ok, detail: ok ? 'ci.yml + release.yml 关键步骤齐全' : '结构异常，需检查 workflow' })
+  } catch (err) {
+    results.push({ name: 'CI/发布 workflow 结构校验', ok: false, detail: err instanceof Error ? err.message : String(err) })
+  }
+}
 
 // 报告
 console.log('\n\n================ 验收报告 ================')
