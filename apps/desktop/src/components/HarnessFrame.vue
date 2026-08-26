@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { listen, emit, type UnlistenFn } from '@tauri-apps/api/event'
 
 const props = defineProps<{
   url: string | null
   state: 'idle' | 'starting' | 'ready' | 'error'
   error: string | null
+  /** 未安装 DSH 运行时（发布形态首次引导） */
+  runtimeMissing?: boolean
+  installing?: boolean
+  onInstallRuntime?: () => void
 }>()
 
 const frameRef = ref<HTMLIFrameElement | null>(null)
 const loaded = ref(false)
 const retryCounter = ref(0)
 let unlisten: UnlistenFn | null = null
+
+const showInstallButton = computed(
+  () => props.runtimeMissing === true && props.state === 'error'
+)
 
 onMounted(async () => {
   try {
@@ -35,6 +43,10 @@ function retry() {
   loaded.value = false
   emit('harness-retry', { attempt: retryCounter.value })
 }
+
+function installRuntime() {
+  void props.onInstallRuntime?.()
+}
 </script>
 
 <template>
@@ -53,7 +65,21 @@ function retry() {
       <div class="harness__spinner" />
       <template v-if="state === 'error'">
         <p class="harness__error">{{ error || 'DSH 启动失败' }}</p>
-        <button class="dsh-button harness__retry" data-testid="retry" @click="retry">重试</button>
+        <div class="harness__actions">
+          <button class="dsh-button harness__retry" data-testid="retry" @click="retry">重试</button>
+          <button
+            v-if="showInstallButton"
+            class="dsh-button dsh-button--primary harness__install"
+            data-testid="install-runtime"
+            :disabled="installing"
+            @click="installRuntime"
+          >
+            {{ installing ? '正在安装 DSH 运行时（首次需要几分钟）…' : '安装 DSH 运行时' }}
+          </button>
+        </div>
+        <p v-if="showInstallButton" class="harness__hint">
+          需要本机已安装 Node.js；也可手动执行 npm -g install @deepseek-ai/dsh 后点重试
+        </p>
       </template>
       <template v-else>
         <p>正在启动 DSH…</p>
@@ -97,6 +123,16 @@ function retry() {
   max-width: 480px;
   text-align: center;
   white-space: pre-wrap;
+}
+.harness__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.harness__hint {
+  font-size: 12px;
+  max-width: 420px;
+  text-align: center;
 }
 @keyframes harness-spin {
   to {

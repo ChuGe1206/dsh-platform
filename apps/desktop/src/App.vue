@@ -45,7 +45,14 @@ sidecar.stateReady((state) => {
 <template>
   <div class="shell" :data-theme="theme.applied.value">
     <TitleBar :state="sidecar.state.value" :dsh-url="sidecar.url.value" />
-    <HarnessFrame :url="sidecar.url.value" :state="sidecar.state.value" :error="sidecar.error.value" />
+    <HarnessFrame
+      :url="sidecar.url.value"
+      :state="sidecar.state.value"
+      :error="sidecar.error.value"
+      :runtime-missing="!sidecar.runtimeInstalled.value"
+      :installing="sidecar.installing.value"
+      :on-install-runtime="sidecar.installRuntime"
+    />
   </div>
 </template>
 
