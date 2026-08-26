@@ -62,6 +62,9 @@ pnpm tauri dev
 
 # 4) 无壳冒烟：直接驱动 DSH web profile（验证插件注入与桥接链路）
 node scripts/smoke-sidecar.mjs
+
+# 5) 一键验收：全部自动验证项汇总（8 项，输出中文报告）
+node scripts/acceptance.mjs
 ```
 
 > 说明：本机对 GitHub 的 `git clone` 大包传输偶发被重置（`Recv failure`），
