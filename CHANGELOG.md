@@ -1,5 +1,13 @@
 # 变更日志（中文）
 
+## 2026-08-27 — v0.1.0 发布与运行引导（15-18 轮）
+
+- **发布运行时方案定型**：安装包保持轻薄（≈2MB）+ 三重运行时来源（`DSH_PLATFORM_RUNTIME` 环境变量 / `install_runtime` 在线引导至 app_data / npm 全局 `npm -g`）；`sidecar.rs resolve_cli` 五级候选链
+- **运行引导 UI 闭环**：`install_runtime` + `runtime_status` 命令；前端错误态"安装 DSH 运行时"按钮（自动重试、手动 npm -g 提示）
+- **真实发布验证**：`pnpm tauri build` → NSIS 1.9MB / MSI 2.75MB；`v0.1.0` tag → GitHub Actions 自动 Release（含安装包资产）；排错 4 轮（spawn shell / symlink dereference / workspace target 路径 / gh CLI）
+- **CI 流水线**：ci.yml（14 步全量门禁：子模块/插件形态/TS/cargo test/clippy -D warnings/端到端冒烟）+ release.yml（v* tag → build-all → tauri build → 上传 + gh CLI 发布），10+ 次运行全部通过
+- **文档**：docs/ARCHITECTURE / PERFORMANCE / EXTERNAL-PLUGINS / UPGRADING / CHANGELOG（中文）+ README 徽章与验证记录
+
 ## 2026-08-26 — dsh-platform v0.1.0（里程碑：桌面端 MVP 完成）
 
 ### Phase 1 基础架构
