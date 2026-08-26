@@ -175,8 +175,7 @@ impl DSHSidecar {
         let deadline = Instant::now() + READY_TIMEOUT;
         let ready = loop {
             if let Some(exit) = child.try_wait().map_err(|err| format!("DSH wait failed: {err}"))? {
-                let mut tail = tail.lock().unwrap_or_else(|e| e.into_inner());
-                let stderr = tail.join("\n");
+                let stderr = tail.lock().unwrap_or_else(|e| e.into_inner()).join("\n");
                 return Err(format!(
                     "DSH exited before ready (code={}){}",
                     exit,

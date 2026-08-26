@@ -10,6 +10,8 @@
 pub mod bridge;
 pub mod commands;
 pub mod sidecar;
+#[cfg(desktop)]
+pub mod tray;
 
 use std::sync::{Arc, Mutex};
 
@@ -45,6 +47,8 @@ pub fn run() {
         ])
         .setup(|app| {
             bridge::spawn(app.handle().clone());
+            #[cfg(desktop)]
+            tray::create(app)?;
             Ok(())
         })
         .run(tauri::generate_context!())
