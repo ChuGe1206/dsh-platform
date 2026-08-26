@@ -851,6 +851,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "dsh-platform-mobile"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "shared-rust",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-notification",
+ "tiny_http",
+]
+
+[[package]]
+name = "dsh-platform-mobile-ios"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "shared-rust",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-notification",
+ "tiny_http",
+]
+
+[[package]]
 name = "dtoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"

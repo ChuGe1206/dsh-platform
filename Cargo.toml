@@ -1,7 +1,9 @@
 [workspace]
 members = [
   "packages/shared-rust",
-  "apps/desktop/src-tauri"
+  "apps/desktop/src-tauri",
+  "apps/mobile-android/src-tauri",
+  "apps/mobile-ios/src-tauri"
 ]
 resolver = "2"
 

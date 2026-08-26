@@ -1,11 +1,10 @@
-//! Mobile native bridge — mirrors apps/desktop/src-tauri/src/bridge.rs on the
+//! Mobile native bridge 鈥?mirrors apps/desktop/src-tauri/src/bridge.rs on the
 //! device loopback. Kept behind the same wire protocol (shared-bridge).
 //! Phase 4 scaffold: file-drop/share/push handlers land with the mobile plugin
 //! work; the server itself is functional.
 
 use serde_json::{json, Value};
 use shared_rust::bridge::{BridgeMethod, BridgeRequest, BridgeResponse};
-use std::io::Read;
 use std::thread;
 use tauri::{AppHandle, Emitter};
 use tiny_http::{Header, Method, Request, Response, Server};
@@ -33,12 +32,12 @@ fn header(name: &'static [u8], value: &'static [u8]) -> Header {
 }
 
 fn handle(app: AppHandle, mut request: Request) {
-    let cors = |response: Response<std::io::Cursor<Vec<u8>>>| {
+    fn cors<T: std::io::Read>(response: Response<T>) -> Response<T> {
         response
             .with_header(header(b"Access-Control-Allow-Origin", b"*"))
             .with_header(header(b"Access-Control-Allow-Methods", b"GET, POST, OPTIONS"))
             .with_header(header(b"Access-Control-Allow-Headers", b"Content-Type"))
-    };
+    }
 
     if request.method() == &Method::Options {
         let _ = request.respond(cors(Response::empty(204)));
