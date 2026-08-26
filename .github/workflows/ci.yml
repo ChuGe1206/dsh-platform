@@ -1,0 +1,62 @@
+name: CI
+
+# 桌面端持续集成：安装 → 校验（harness/插件形态）→ TS 全量 → Rust 全量（check/clippy/test）
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    # 目标主机为 Windows（WebView2/NSIS 工具链齐备）；macOS/Linux runner 待平台资源就绪后增加
+    runs-on: windows-latest
+    steps:
+      - name: 检出（含 harness 子模块）
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.17.0
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust 缓存
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: target
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: 校验 harness 子模块 + 渲染 overlay
+        run: node scripts/prepare-harness.mjs
+
+      - name: 插件形态校验（6.2 自动化）
+        run: node scripts/verify-plugin-shape.mjs
+
+      - name: TypeScript 全量类型检查 + 构建
+        run: pnpm exec turbo run typecheck build
+
+      - name: Rust 单元测试
+        run: cargo test --workspace
+
+      - name: Rust clippy（零警告门槛）
+        run: cargo clippy --workspace -- -D warnings
+
+      - name: 端到端冒烟（DSH web + 插件注入 + 桥流量）
+        run: node scripts/smoke-sidecar.mjs

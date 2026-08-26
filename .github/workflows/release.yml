@@ -1,0 +1,68 @@
+name: Release
+
+# 发布流水线：tag v*（或手动触发）→ 全量构建 → 打包 NSIS/MSI → 上传产物 + GitHub Release
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  package-windows:
+    runs-on: windows-latest
+    steps:
+      - name: 检出（含 harness 子模块）
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.17.0
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust 缓存
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: target
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: 准备 harness / overlay / runtime
+        run: node scripts/prepare-harness.mjs
+
+      # 发布运行时注入（DSH CLI + 依赖复制到 src-tauri/runtime）：
+      # 完整体积策略见 docs/PERFORMANCE.md；在此构建产物即最终安装包。
+      - name: 全量构建（turbo + cargo release）
+        run: node scripts/build-all.mjs
+
+      - name: Tauri 打包（NSIS + MSI）
+        run: pnpm --filter @dsh-platform/desktop tauri:build
+
+      - name: 上传安装包产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsh-platform-windows
+          path: |
+            apps/desktop/src-tauri/target/release/bundle/nsis/*.exe
+            apps/desktop/src-tauri/target/release/bundle/msi/*.msi
+
+      - name: 发布 GitHub Release（仅 tag 触发）
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/desktop/src-tauri/target/release/bundle/nsis/*.exe
+          fail_on_unmatched_files: true

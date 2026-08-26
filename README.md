@@ -105,3 +105,12 @@ node scripts/smoke-sidecar.mjs
 > 无法进行真机构建/联调。`apps/mobile-*` 与 `apps/harmonyos` 保留为脚手架
 > （代码已纳入类型检查与 cargo workspace 编译验证），工具链就绪后即可恢复推进。
 > 桌面端（Win/macOS/Linux）持续迭代中。
+
+## CI 与发布（GitHub Actions）
+
+- **`.github/workflows/ci.yml`**：push/PR 自动执行 —— harness 校验 → 插件形态校验 →
+  TS 全量 typecheck+build → cargo test → clippy（`-D warnings` 零警告门槛）→
+  端到端冒烟（DSH web + 插件注入 + 桥流量）
+- **`.github/workflows/release.yml`**：`v*` tag（或手动触发）→ 全量构建 →
+  `tauri build`（NSIS + MSI）→ 上传产物 + GitHub Release
+- 发布运行时（DSH CLI 打包）策略见 `docs/PERFORMANCE.md`「发布运行时」
