@@ -1,0 +1,30 @@
+# config/mobile-overlay.yml — 移动端（Tauri Mobile）overlay 模板。
+#
+# 移动端不跑 sidecar：desktop-bridge 以 remote 模式把回合通知转发到设备
+# 上的原生桥（push-notification 插件），其余插件与桌面端共用但关闭
+# 仅桌面行为（文件拖放复用 file-picker 桥接）。
+
+- insert:
+    - id: desktop-bridge
+      name: ./plugins/dsh-plugins/desktop-bridge
+      config:
+        mode: remote
+        native_port: 9527
+        remote_endpoint: 'http://127.0.0.1:9527'   # 设备本机；由 shell 按实际端口覆写
+        use_hms_push: false
+        debounce_ms: 2000
+
+- insert:
+    - id: dsh-attachments
+      name: ./plugins/dsh-plugins/dsh-attachments
+      config:
+        max_file_size: 209715200  # 200MB（移动端/鸿蒙）
+        allowed_extensions: ['.txt', '.md', '.js', '.ts', '.py', '.json', '.tsx', '.vue', '.rs', '.pdf', '.png', '.jpg']
+
+- insert:
+    - id: dsh-session-backup
+      name: ./plugins/dsh-plugins/dsh-session-backup
+      config:
+        interval: 900000  # 15分钟（省电）
+        max_backups: 20
+        compress: true

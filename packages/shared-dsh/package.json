@@ -1,0 +1,30 @@
+{
+  "name": "@dsh-platform/shared-dsh",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DSH integration for dsh-platform: sidecar spawn, overlay patch loading, plugin registry, remote client.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./remote-client": "./src/remote-client.ts",
+    "./browser": "./src/browser.ts",
+    "./sidecar": "./src/sidecar.ts",
+    "./patch-loader": "./src/patch-loader.ts",
+    "./plugin-registry": "./src/plugin-registry.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dsh-platform/shared-bridge": "workspace:*",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.8.0"
+  }
+}

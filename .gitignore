@@ -1,0 +1,36 @@
+# --- Node ---
+node_modules/
+dist/
+lib/
+*.tsbuildinfo
+pnpm-debug.log*
+.turbo/
+
+# --- Rust / Tauri ---
+target/
+apps/*/src-tauri/gen/
+apps/*/src-tauri/target/
+**/*.rs.bk
+
+# --- DSH harness (submodule artifacts are repo-owned; local build output below) ---
+harness/apps/cli/lib/*.js.map
+harness/node_modules/
+
+# --- HarmonyOS build outputs ---
+apps/harmonyos/entry/src/main/resources/rawfile/
+apps/harmonyos/entry/build/
+apps/harmonyos/.hvigor/
+
+# --- Generated / local state ---
+config/*.generated.yml
+.dsh-local/
+.dsh-smoke/
+runtime/
+coverage/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+.DS_Store

@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "preserve",
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@dsh-platform/shared-bridge": ["../../packages/shared-bridge/src/index.ts"],
+      "@dsh-platform/shared-dsh/browser": ["../../packages/shared-dsh/src/browser.ts"],
+      "@dsh-platform/shared-ui": ["../../packages/shared-ui/src/index.ts"],
+      "@dsh-platform/native-harmony-bridge": ["../../plugins/native-plugins-harmony/harmony-bridge/src/index.ts"],
+      "@dsh-platform/native-hms-push": ["../../plugins/native-plugins-harmony/hms-push/src/index.ts"],
+      "@dsh-platform/native-file-access": ["../../plugins/native-plugins-harmony/file-access/src/index.ts"],
+      "@dsh-platform/native-distributed-softbus": ["../../plugins/native-plugins-harmony/distributed-softbus/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+}

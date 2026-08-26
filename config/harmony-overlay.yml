@@ -1,0 +1,28 @@
+# config/harmony-overlay.yml — 鸿蒙端 overlay 模板。
+#
+# 鸿蒙走 remote 模式 + HMS Push：desktop-bridge 在 use_hms_push: true 时
+# 把回合完成通知打到原生桥的 /hms-push 端点（NativeHarmonyBridge 承接）。
+
+- insert:
+    - id: desktop-bridge
+      name: ./plugins/dsh-plugins/desktop-bridge
+      config:
+        mode: remote
+        native_port: 9527
+        remote_endpoint: 'http://127.0.0.1:9527'   # 由 HarmonyBridge 按设备实际端口覆写
+        use_hms_push: true
+        debounce_ms: 2000
+
+- insert:
+    - id: dsh-attachments
+      name: ./plugins/dsh-plugins/dsh-attachments
+      config:
+        max_file_size: 209715200
+        allowed_extensions: ['.txt', '.md', '.js', '.ts', '.py', '.json', '.tsx', '.vue', '.rs', '.pdf', '.png', '.jpg', '.heic']
+
+- insert:
+    - id: dsh-lan-access
+      name: ./plugins/dsh-plugins/dsh-lan-access
+      config:
+        advertise: true
+        advertise_interval: 120000

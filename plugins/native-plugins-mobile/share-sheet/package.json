@@ -1,0 +1,18 @@
+{
+  "name": "@dsh-platform/native-share-sheet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "System share sheet surface for mobile shells.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "build": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^2.5.0",
+    "typescript": "^5.8.0"
+  }
+}

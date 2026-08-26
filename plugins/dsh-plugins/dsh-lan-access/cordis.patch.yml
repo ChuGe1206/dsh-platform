@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-lan-access
+      name: '@dsh-platform/dsh-lan-access'
+      config:
+        advertise: true
+        advertise_interval: 60000

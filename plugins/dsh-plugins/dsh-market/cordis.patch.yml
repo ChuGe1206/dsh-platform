@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-market
+      name: '@dsh-platform/dsh-market'
+      config:
+        registry_url: 'https://registry.dsh.example.com'
+        profile: web

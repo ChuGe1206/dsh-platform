@@ -1,0 +1,12 @@
+# @dsh-platform/desktop-bridge bundle patch.
+# Applied as a *profile bundle* layer (dsh.bundle.patch): rows below are
+# resolved by name; the desktop overlay (`config/desktop-overlay.yml`)
+# renders their `name` to absolute module specifiers on this machine.
+
+- insert:
+    - id: desktop-bridge
+      name: '@dsh-platform/desktop-bridge'
+      config:
+        mode: local
+        native_port: 9527
+        debounce_ms: 1500

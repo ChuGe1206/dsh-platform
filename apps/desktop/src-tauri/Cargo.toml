@@ -1,0 +1,28 @@
+[package]
+name = "dsh-platform"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "dsh-platform desktop shell (Tauri v2 + DSH sidecar)"
+authors = ["dsh-platform"]
+
+[lib]
+name = "dsh_platform"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-notification = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tiny_http = "0.12"
+shared-rust = { path = "../../../packages/shared-rust" }
+
+[features]
+# Tauri's default custom-protocol feature is enabled by `tauri build` via CI env;
+# nothing extra is needed for plain `cargo check`.

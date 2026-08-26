@@ -1,0 +1,33 @@
+{
+  "name": "@dsh-platform/mobile-ios",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "dsh-platform iOS shell (Tauri Mobile) — remote-client mode. Shares the mobile-android frontend sources (Phase 4 scaffold).",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1470",
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev"
+  },
+  "dependencies": {
+    "@dsh-platform/native-biometric-auth": "workspace:*",
+    "@dsh-platform/native-file-picker": "workspace:*",
+    "@dsh-platform/native-push-notification": "workspace:*",
+    "@dsh-platform/native-share-sheet": "workspace:*",
+    "@dsh-platform/shared-bridge": "workspace:*",
+    "@dsh-platform/shared-dsh": "workspace:*",
+    "@dsh-platform/shared-ui": "workspace:*",
+    "@tauri-apps/api": "^2.5.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.5.0",
+    "@vitejs/plugin-vue": "^5.2.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vue-tsc": "^2.2.10"
+  }
+}

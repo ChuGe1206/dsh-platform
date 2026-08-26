@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "preserve",
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@dsh-platform/shared-bridge": ["../../packages/shared-bridge/src/index.ts"],
+      "@dsh-platform/shared-dsh": ["../../packages/shared-dsh/src/index.ts"],
+      "@dsh-platform/shared-ui": ["../../packages/shared-ui/src/index.ts"],
+      "@dsh-platform/native-window-manager": ["../../plugins/native-plugins-desktop/window-manager/src/index.ts"],
+      "@dsh-platform/native-global-shortcut": ["../../plugins/native-plugins-desktop/global-shortcut/src/index.ts"],
+      "@dsh-platform/native-system-tray": ["../../plugins/native-plugins-desktop/system-tray/src/index.ts"],
+      "@dsh-platform/native-auto-updater": ["../../plugins/native-plugins-desktop/auto-updater/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+}
