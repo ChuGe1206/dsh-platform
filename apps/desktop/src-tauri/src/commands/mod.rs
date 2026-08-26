@@ -3,3 +3,4 @@
 pub mod desktop;
 pub mod notify;
 pub mod shortcut;
+pub mod updater;

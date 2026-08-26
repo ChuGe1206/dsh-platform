@@ -44,20 +44,26 @@ scripts/            prepare / build / publish 自动化
 
 ```bash
 # 0) 前置：Node >= 22, pnpm >= 9, Rust stable (cargo 1.77+), Tauri 系统依赖
+# 1) 从 GitHub 克隆（子模块一并拉取）
+git clone --recurse-submodules https://github.com/ChuGe1206/dsh-platform.git
+cd dsh-platform
 
-# 1) 初始化（submodule + workspace 安装）
-git submodule update --init --recursive
+# 2) 初始化（workspace 安装）
 pnpm install
 pnpm prepare:harness        # 校验 submodule / 渲染 config/*.generated.yml
 pnpm prepare:external       # 校验 external-plugins.json 声明的外部插件
 
-# 2) 打包桌面端（推荐直接用 Tauri 的 dev 流程）
+# 3) 桌面端（Tauri dev：Rust 壳 → sidecar → DSH Web UI）
 cd apps/desktop
-pnpm tauri dev              # 启动 Rust 壳 → sidecar → DSH Web UI
+pnpm tauri dev
 
-# 3) 无壳冒烟：直接驱动 DSH web profile
+# 4) 无壳冒烟：直接驱动 DSH web profile（验证插件注入与桥接链路）
 node scripts/smoke-sidecar.mjs
 ```
+
+> 说明：本机对 GitHub 的 `git clone` 大包传输偶发被重置（`Recv failure`），
+> 若 `git submodule update` 失败，可直接执行
+> `git -C harness fetch https://github.com/deepseek-ai/deepseek-harness.git tag dsh-v0.1.0-rc.8 && git -C harness checkout dsh-v0.1.0-rc.8`。
 
 ## 关键约束
 

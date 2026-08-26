@@ -39,6 +39,9 @@ pub fn run() {
             commands::notify::show_notification,
             commands::shortcut::register_global_shortcut,
             commands::shortcut::unregister_global_shortcut,
+            commands::updater::update_check,
+            commands::updater::update_download,
+            commands::updater::update_install,
         ])
         .setup(|app| {
             bridge::spawn(app.handle().clone());
