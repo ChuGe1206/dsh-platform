@@ -22,10 +22,10 @@ git push origin v0.1.1    # 推送 tag → GitHub Actions release.yml 自动触�
    ```bash
    Invoke-RestMethod -Uri "https://api.github.com/repos/ChuGe1206/dsh-platform/git/refs/tags/v0.1.1"
    ```
-4. 若删除持续失败（网络/权限），可在 Actions 页面用 **workflow_dispatch**
-   手动触发 release.yml（手动运行不会附带 tag 的 `gh release create` —
-   该步骤仅在 `startsWith(github.ref, 'refs/tags/')` 时执行，并会在手动跑时
-   跳过，需要稍后手动补 Release 或等网络恢复后重推 tag）。
+4. 若删除持续失败（网络/权限），可改用 **workflow_dispatch 手动触发**：
+   Actions 页面 → Release → Run workflow → 填写 `release_tag`（如 v0.1.2）。
+   手动触发同样执行 构建 → 打包 → 上传，并用 gh CLI 创建/追加 Release 资产
+   （已存在时自动 upload --clobber，不覆盖笔记）。
 
 ## 版本语义
 
