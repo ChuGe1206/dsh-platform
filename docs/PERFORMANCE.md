@@ -45,10 +45,13 @@ node scripts/measure-startup.mjs    # 输出 vite-ready / bridge-ready / dsh-web
 
 ## 基线数据（本机记录）
 
-| 测量项 | 冷启动（首次） | 热启动（第二次） |
+| 测量项 | dev（vite + debug 壳） | **发布形态（release exe，无 vite）** |
 | --- | --- | --- |
-| vite-ready | ~7.0 s | ~0.05 s（端口热） |
-| bridge-ready（壳+桥） | ~7.0 s（含首次 vite 编译？不——vite 已就绪后 15ms） | ~2.3 s |
-| dsh-web-ready | ~82 s | ~64 s |
+| vite-ready | ~7.0 s（首次）/ ~0.05 s（热） | 0（内嵌前端） |
+| bridge-ready（壳+桥） | ~2.3 s（热） | **~0.03 s** |
+| dsh-web-ready | ~64 s（sidecar 冷启动） | ~64 s（sidecar 冷启动，同源） |
+| 窗口内存 | 41.2 MB | **25.4 MB** |
 
-> 注：首次测量包含 vite 首次冷启动（无缓存），第二次为常态值。
+> 发布形态附加说明：release 二进制内嵌前端（无 vite 依赖），壳与桥
+> 30ms 级就绪；DSH UI 就绪仍由 sidecar 冷启动主导（约 60s → 64s），
+> 依赖预启动/常驻策略（已落地：setup 预启动 + 托盘常驻）。
