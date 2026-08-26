@@ -46,11 +46,11 @@ jobs:
       - name: 校验 harness 子模块 + 渲染 overlay
         run: node scripts/prepare-harness.mjs
 
-      - name: 插件形态校验（6.2 自动化）
-        run: node scripts/verify-plugin-shape.mjs
-
-      - name: TypeScript 全量类型检查 + 构建
+      - name: TypeScript 全量类型检查 + 构建（含插件 lib 产物）
         run: pnpm exec turbo run typecheck build
+
+      - name: 插件形态校验（6.2 自动化，依赖上一步构建产物）
+        run: node scripts/verify-plugin-shape.mjs
 
       - name: Rust 单元测试
         run: cargo test --workspace
