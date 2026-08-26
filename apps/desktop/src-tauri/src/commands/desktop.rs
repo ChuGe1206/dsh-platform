@@ -3,7 +3,7 @@
 use crate::SidecarHandle;
 use serde::Serialize;
 use std::sync::Mutex;
-use tauri::{AppHandle, Emitter, State, WebviewWindow};
+use tauri::{AppHandle, Emitter, Manager, State, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 
 #[derive(Debug, Clone, Serialize)]
@@ -34,6 +34,79 @@ pub async fn start_sidecar(app: AppHandle, state: State<'_, SidecarHandle>) -> R
     })
     .await
     .map_err(|error| format!("sidecar task failed: {error}"))?
+}
+
+/// 在线安装 DSH 运行时（发布形态首次引导）。
+///
+/// 安装包保持轻薄（壳 + 协议），DSH Node 依赖在首次启动时安装到
+/// `<app_data_dir>/runtime`（`npm install @deepseek-ai/dsh@<version>`，
+/// `--prefix` 目标目录 + `--omit=dev`）。成功校验 `lib/bin.js` 存在。
+/// 需要机器上有 Node.js（npm）；无 Node 环境时提示安装。
+#[tauri::command]
+pub async fn install_runtime(app: AppHandle, version: Option<String>) -> Result<(), String> {
+    let data_dir = app.path().app_data_dir().map_err(|e| format!("app data dir: {e}"))?;
+    let runtime_dir = data_dir.join("runtime");
+    std::fs::create_dir_all(&runtime_dir).map_err(|e| format!("create runtime dir: {e}"))?;
+
+    let npm_checked = std::env::var("DSH_PLATFORM_NPM")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| "npm".to_string());
+    // 与仓库依赖一致的 DSH CLI 版本（见 HARNESS_UPSTREAM.md / 根 package.json）
+    let spec = version.unwrap_or_else(|| "0.1.1-rc.2".to_string());
+
+    let npm_args = [
+        "install".to_string(),
+        format!("@deepseek-ai/dsh@{spec}"),
+        "--prefix".to_string(),
+        runtime_dir.to_string_lossy().into_owned(),
+        "--omit=dev".to_string(),
+        "--no-audit".to_string(),
+        "--no-fund".to_string(),
+    ];
+
+    let output = std::process::Command::new(&npm_checked)
+        .args(&npm_args)
+        .env("npm_config_yes", "true")
+        .output()
+        .map_err(|err| format!("failed to run `{npm_checked}` (需要本机已安装 Node.js): {err}"))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(format!(
+            "runtime 安装失败（npm 退出 {}）: {}",
+            output.status,
+            stderr.lines().last().unwrap_or("")
+        ));
+    }
+
+    let bin = runtime_dir
+        .join("node_modules")
+        .join("@deepseek-ai")
+        .join("dsh")
+        .join("lib")
+        .join("bin.js");
+    if !bin.exists() {
+        return Err(format!("npm 成功但未找到 DSH CLI: {}", bin.display()));
+    }
+    Ok(())
+}
+
+/// 当前运行时状态（前端引导 UI 用）。
+#[tauri::command]
+pub fn runtime_status(app: AppHandle) -> Result<serde_json::Value, String> {
+    let data_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
+    let bin = data_dir
+        .join("runtime")
+        .join("node_modules")
+        .join("@deepseek-ai")
+        .join("dsh")
+        .join("lib")
+        .join("bin.js");
+    Ok(serde_json::json!({
+        "dshRuntimeInstalled": bin.exists(),
+        "runtimeDir": data_dir.join("runtime").to_string_lossy(),
+    }))
 }
 
 /// Stop the sidecar (the window's WebView keeps the current URL).

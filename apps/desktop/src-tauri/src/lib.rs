@@ -31,6 +31,8 @@ pub fn run() {
             commands::desktop::stop_sidecar,
             commands::desktop::get_dsh_status,
             commands::desktop::restart_sidecar,
+            commands::desktop::install_runtime,
+            commands::desktop::runtime_status,
             commands::desktop::open_file_dialog,
             commands::desktop::window_minimize,
             commands::desktop::window_toggle_maximize,

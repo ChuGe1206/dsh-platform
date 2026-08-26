@@ -6,13 +6,15 @@
 | 启动时间 | < 3 s（点击 → DSH UI 可交互） | 壳部分 **~2.3 s**（进程 → 原生桥 :9527 健康）✅；DSH UI 就绪 **~64 s**（sidecar 冷启动）❌ | 部分 |
 | 内存占用 | < 80 MB（Tauri 壳本身） | **41.2 MB**（`dsh-platform.exe` WorkingSet，窗口实测） | ✅ |
 
-> **发布运行时（重要）**：当前打包物为"壳 + overlay 配置"（1.9MB）。
-> sidecar 运行需要 DSH CLI（node 运行时 + `@deepseek-ai/dsh` 及其依赖）。
-> `scripts/build-all.mjs` 第 4 步会把 runtime 复制到
-> `src-tauri/runtime/` 后再 `tauri build`（资源映射 runtime/harness/apps/cli）。
-> Node + DSH 全家桶体积约 50–80 MB，会超出 20MB 目标 —— 发布时建议：
-> ① 使用压缩 Node 单文件运行时（pkg/neon）或 ② 仅打包 profile 依赖白名单，
-> 由安装器按平台选择；该压包工作列入发布流水线（GitHub Actions）。
+> **发布运行时（最终方案，2026-08 落地）**：安装包保持轻薄（壳 + 协议 ≈2MB）。
+> sidecar 的 DSH CLI 按顺序解析（`sidecar.rs resolve_cli`）：
+> ① `DSH_PLATFORM_RUNTIME` 环境变量 → ② `<app_data_dir>/runtime`（发布形态首次
+> 引导：`install_runtime` 命令在线 `npm install @deepseek-ai/dsh@0.1.1-rc.2` 至
+> 数据目录）→ ③ **npm 全局安装**（`npm root -g`，用户手动 `npm -g install`
+> / `npx` 即属此路径，已实测 0.1.1-rc.2 可用）→ ④ 仓库 submodule/根依赖（dev）。
+> 说明：DSH Node 全家桶体积远超 20MB 目标，因此不打包进安装包（架构决策），
+> 文档化取舍：①运行时在线安装（本方案，安装包最小）②完整运行时打包（接受
+> 体积超标）③依赖白名单精简（后续）。
 
 ## 实测方法（可复现）
 

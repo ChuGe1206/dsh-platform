@@ -103,7 +103,7 @@ impl DSHSidecar {
 
         let repo_root = repo_root().ok_or("cannot resolve dsh-platform repo root (set DSH_PLATFORM_REPO)")?;
 
-        let cli = resolve_cli(&repo_root)?;
+        let cli = resolve_cli(&repo_root, app)?;
         let overlay = resolve_overlay(&repo_root);
         let dsh_home = resolve_dsh_home(app)?;
         std::fs::create_dir_all(&dsh_home).map_err(|err| format!("failed to create DSH_HOME: {err}"))?;
@@ -268,23 +268,40 @@ fn repo_root() -> Option<PathBuf> {
 }
 
 /// Resolve the DSH CLI bin.js:
-///  1. dev: `<root>/harness/apps/cli/lib/bin.js` (submodule build output)
-///  2. dev: `<root>/node_modules/@deepseek-ai/dsh/lib/bin.js` (npm fallback)
-///  3. release: resource `runtime/harness/apps/cli/lib/bin.js`
-fn resolve_cli(root: &Path) -> Result<String, String> {
-    let candidates = [
-        root.join("harness").join("apps").join("cli").join("lib").join("bin.js"),
-        root.join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"),
-    ];
+///  1. `DSH_PLATFORM_RUNTIME` env（测试/自定义）
+///  2. `<app_data_dir>/runtime/...`（发布形态在线运行时 install_runtime）
+///  3. npm 全局安装 `npm root -g`（用户手动 npm -g / npx 安装的 DSH）
+///  4. dev: `<root>/harness/apps/cli/lib/bin.js`（submodule 构建输出）
+///  5. dev: `<root>/node_modules/@deepseek-ai/dsh/lib/bin.js`（npm 回退）
+fn resolve_cli(root: &Path, app: &AppHandle) -> Result<String, String> {
+    let mut candidates: Vec<PathBuf> = Vec::new();
+    if let Ok(env_runtime) = std::env::var("DSH_PLATFORM_RUNTIME") {
+        if !env_runtime.trim().is_empty() {
+            candidates.push(PathBuf::from(env_runtime).join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+        }
+    }
+    if let Ok(data_dir) = app.path().app_data_dir() {
+        candidates.push(data_dir.join("runtime").join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+    }
+    if let Ok(output) = Command::new("npm").args(["root", "-g"]).output() {
+        if output.status.success() {
+            let global_root = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            if !global_root.is_empty() {
+                candidates.push(PathBuf::from(global_root).join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+            }
+        }
+    }
+    candidates.push(root.join("harness").join("apps").join("cli").join("lib").join("bin.js"));
+    candidates.push(root.join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+
     for candidate in &candidates {
         if candidate.exists() {
             return Ok(candidate.to_string_lossy().into_owned());
         }
     }
     Err(format!(
-        "DSH CLI not found (searched {}, {}); run `pnpm install` or build harness/apps/cli",
-        candidates[0].display(),
-        candidates[1].display()
+        "DSH CLI not found (searched {}); dev: run `pnpm install`; release: 运行 install_runtime 在线安装或 npm -g install @deepseek-ai/dsh",
+        candidates.iter().map(|c| c.display().to_string()).collect::<Vec<_>>().join(", ")
     ))
 }
 
