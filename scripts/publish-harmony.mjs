@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * publish-harmony — build & install the HarmonyOS entry HAP.
+ * publish-harmony 鈥?build & install the HarmonyOS entry HAP.
  *
  * Requires DevEco Studio (hvigorw) and a connected device/emulator.
- * Steps: hvigor assembleHap → hdc install. Fails gracefully when the
+ * Steps: hvigor assembleHap 鈫?hdc install. Fails gracefully when the
  * toolchain is absent (CI/dry-run friendly).
  *
  * Usage:
@@ -45,10 +45,10 @@ function findHvigor() {
 }
 
 // Verify the frontend assets are present; they come from `pnpm build` of
-// apps/harmonyos (vite → entry/src/main/resources/rawfile).
+// apps/harmonyos (vite 鈫?entry/src/main/resources/rawfile).
 const rawfile = join(harmonyRoot, 'entry', 'src', 'main', 'resources', 'rawfile')
 if (!existsSync(rawfile) || readdirSync(rawfile).length === 0) {
-  log(`WARN: rawfile assets missing at ${rawfile} — run 'pnpm build' in apps/harmonyos first`)
+  log(`WARN: rawfile assets missing at ${rawfile} 鈥?run 'pnpm build' in apps/harmonyos first`)
 }
 
 if (dryRun) {
@@ -57,9 +57,7 @@ if (dryRun) {
 }
 
 const build = spawnSync(hvigor, ['assembleHap', '--mode', 'module', '-p', 'product=default'], {
-  stdio: 'inherit',
-  cwd: harmonyRoot
-})
+  stdio: 'inherit',\n  cwd: harmonyRoot,\n  shell: true\n})
 if (build.status !== 0) {
   console.error(`[publish-harmony] hvigor failed (exit ${build.status})`)
   process.exit(build.status ?? 1)
@@ -71,7 +69,7 @@ if (!hap) {
   process.exit(1)
 }
 log(`installing ${hap}`)
-const install = spawnSync('hdc', ['install', '-r', hap], { stdio: 'inherit' })
+const install = spawnSync('hdc', ['install', '-r', hap], { stdio: 'inherit', shell: true })
 process.exit(install.status ?? 1)
 
 function findHap() {
