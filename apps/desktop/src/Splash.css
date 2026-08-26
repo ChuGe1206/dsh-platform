@@ -1,4 +1,5 @@
-/* Splash — 透明窗口内的"多层海浪"场景。窗口之外透明,只有海浪+鲸鱼可见。 */
+/* Splash — 透明窗口内的"多层海浪"场景。窗口之外透明,只有海浪+鲸鱼可见。
+   每层浪用 clip-path(异形)+ CSS background 渐变(稳定不黑),层次用 z-index 叠。 */
 
 .splash {
   position: fixed;
@@ -8,15 +9,66 @@
   user-select: none;
 }
 
-/* 情景 SVG:铺满窗口(viewBox 480x300,按比例 none 拉伸)。 */
-.splash__scene {
+/* 通用浪层。 */
+.splash__wave {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
 }
 
-/* 品牌文案(叠于浪体下方居中)。 */
+/* 后浪(最浅,最高)。 */
+.splash__wave--back {
+  clip-path: path(
+    "M0 300 L0 150 C60 110 120 100 180 116 C240 132 300 124 360 114 C420 104 460 118 480 126 L480 300 Z"
+  );
+  background: linear-gradient(180deg, rgba(222, 244, 255, 0.95) 0%, rgba(150, 206, 245, 0.72) 100%);
+  z-index: 1;
+}
+
+/* 鲸鱼(后浪之上、中浪之下)。 */
+.splash__whale {
+  position: absolute;
+  left: 40px;
+  top: 96px;
+  width: 104px;
+  height: 76px;
+  color: #2f7fe0;
+  filter: drop-shadow(0 6px 12px rgba(31, 111, 224, 0.25));
+  transform: rotate(-12deg);
+  z-index: 2;
+  animation: splash-float 2.6s ease-in-out infinite;
+}
+
+/* 中浪(遮住鲸鱼下半身)。 */
+.splash__wave--mid {
+  clip-path: path(
+    "M0 300 L0 196 C70 168 140 160 210 173 C280 186 340 172 410 164 C450 160 470 166 480 170 L480 300 Z"
+  );
+  background: linear-gradient(180deg, rgba(150, 206, 245, 0.8) 0%, rgba(88, 156, 220, 0.78) 100%);
+  z-index: 3;
+}
+
+/* 前浪(最深)。 */
+.splash__wave--front {
+  clip-path: path(
+    "M0 300 L0 236 C90 212 170 210 250 224 C330 238 410 226 480 214 L480 300 Z"
+  );
+  background: linear-gradient(180deg, rgba(58, 116, 186, 0.85) 0%, rgba(30, 72, 130, 0.92) 100%);
+  z-index: 4;
+}
+
+/* 空气星光。 */
+.splash__sparkles {
+  position: absolute;
+  left: 120px;
+  top: 20px;
+  width: 200px;
+  height: 90px;
+  color: rgba(255, 255, 255, 0.9);
+  fill: rgba(255, 255, 255, 0.9);
+  z-index: 5;
+}
+
+/* 品牌文案(叠于浪体下方)。 */
 .splash__content {
   position: absolute;
   left: 0;
@@ -27,6 +79,7 @@
   align-items: center;
   gap: 10px;
   color: #0f3a68;
+  z-index: 6;
   -webkit-app-region: drag;
 }
 .splash__brand {
@@ -61,5 +114,14 @@
 @keyframes splash-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes splash-float {
+  0%,
+  100% {
+    transform: rotate(-12deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-9deg) translateY(-6px);
   }
 }
