@@ -94,6 +94,7 @@ node scripts/smoke-sidecar.mjs
 - 架构说明（中文）：`docs/ARCHITECTURE.md`（模块图 / 启动时序 / 桥协议 / 插件注入机制 / 验证矩阵）
 - 性能基线：`docs/PERFORMANCE.md`
 - 自动更新接入：`docs/UPGRADING.md`
+- 外部插件集成：`docs/EXTERNAL-PLUGINS.md`（三种路径 + 实测记录 + DSH 事件名核实）
 - DSH 官方仓库：https://github.com/deepseek-ai/deepseek-harness
 - Cordis：https://github.com/cordiverse/cordis
 - Tauri v2：https://tauri.app/
