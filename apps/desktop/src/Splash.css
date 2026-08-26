@@ -1,89 +1,88 @@
-/* Splash — 透明窗口内绘制"海浪剪影"异形玻璃卡。窗口之外透明,只有海浪形状可见。 */
+/* Splash — 透明窗口内绘制"海浪剪影"异形玻璃卡。窗口之外透明,只有海浪形状可见。
+   采用纯半透明渐变(无 backdrop-filter),让桌面透过 rgba 渐变呈现通透感。 */
 
 .splash {
   position: fixed;
   inset: 0;
   background: transparent;
   overflow: hidden;
+  user-select: none;
 }
 
-/* 海浪剪影:用 clip-path 裁出不规则的海浪上沿,半透明渐变 + 磨砂玻璃。 */
+/* 海浪剪影:clip-path 裁出不规则海浪上沿,半透明渐变(上浅下深海蓝)。 */
 .splash__glass {
   position: absolute;
   inset: 0;
   clip-path: path(
-    "M0 260 L0 150 C26 116 68 98 110 106 C140 112 162 132 200 134 C238 136 262 118 296 114 C336 110 378 126 420 140 L420 260 Z"
+    "M0 300 L0 172 C30 132 78 112 126 122 C160 128 186 152 230 154 C274 156 302 134 340 132 C384 128 432 146 480 160 L480 300 Z"
   );
-  background: linear-gradient(168deg, rgba(233,247,255,0.86) 0%, rgba(174,221,255,0.62) 46%, rgba(86,154,226,0.74) 100%);
-  backdrop-filter: blur(14px) saturate(1.25);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -40px 60px -40px rgba(42, 96, 160, 0.5);
+  background: linear-gradient(172deg, rgba(233, 247, 255, 0.9) 0%, rgba(176, 222, 255, 0.68) 42%, rgba(96, 162, 228, 0.74) 78%, rgba(56, 118, 190, 0.82) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -50px 70px -45px rgba(32, 82, 144, 0.55);
   -webkit-app-region: drag;
 }
 
-/* 鲸鱼:跃出浪尖,带轻微浮起动效。 */
+/* 鲸鱼:放低使其下半浸入浪面,呈跃浪/破水姿态。 */
 .splash__whale {
   position: absolute;
-  left: 30px;
-  top: 40px;
-  width: 84px;
-  height: 62px;
+  left: 40px;
+  top: 56px;
+  width: 96px;
+  height: 70px;
   color: #1f6fe0;
-  filter: drop-shadow(0 8px 14px rgba(31, 111, 224, 0.34));
-  transform: rotate(-14deg);
-  animation: splash-float 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 14px rgba(31, 111, 224, 0.33));
+  transform: rotate(-16deg);
+  animation: splash-float 2.6s ease-in-out infinite;
 }
 
-/* 喷雾:鲸鱼跃起时浪花的小光点。 */
+/* 浪花/水线:鲸鱼跃出水面的破水光点与水线。 */
 .splash__spray {
   position: absolute;
-  left: 22px;
-  top: 96px;
-  width: 116px;
-  height: 44px;
-  color: rgba(255, 255, 255, 0.9);
-  fill: rgba(255, 255, 255, 0.9);
-  opacity: 0.95;
+  left: 30px;
+  top: 122px;
+  width: 140px;
+  height: 48px;
+  color: rgba(255, 255, 255, 0.92);
+  fill: rgba(255, 255, 255, 0.92);
+  opacity: 0.96;
 }
 
-/* 品牌文案。 */
+/* 品牌文案(居中于浪体)。 */
 .splash__content {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 16px;
+  bottom: 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 9px;
-  color: #123a6b;
-  user-select: none;
+  gap: 10px;
+  color: #10365f;
   -webkit-app-region: drag;
 }
 .splash__brand {
-  font-size: 19px;
+  font-size: 21px;
   font-weight: 800;
   letter-spacing: 0.4px;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.35);
 }
 .splash__tagline {
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 3px;
-  color: rgba(18, 58, 107, 0.68);
+  color: rgba(16, 54, 95, 0.66);
   text-transform: uppercase;
 }
 .splash__loader {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 2px;
 }
 .splash__spinner {
-  width: 17px;
-  height: 17px;
-  border: 2.5px solid rgba(18, 58, 107, 0.22);
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(16, 54, 95, 0.22);
   border-top-color: #1f6fe0;
   border-radius: 50%;
   animation: splash-spin 0.9s linear infinite;
@@ -97,9 +96,9 @@
 @keyframes splash-float {
   0%,
   100% {
-    transform: rotate(-14deg) translateY(0);
+    transform: rotate(-16deg) translateY(0);
   }
   50% {
-    transform: rotate(-11deg) translateY(-8px);
+    transform: rotate(-12deg) translateY(-9px);
   }
 }

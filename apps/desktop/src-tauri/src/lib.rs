@@ -15,7 +15,7 @@ pub mod version;
 pub mod tray;
 
 use std::sync::{Arc, Mutex};
-use tauri::Manager;
+use tauri::{AppHandle, Manager};
 
 pub type SidecarHandle = Arc<Mutex<sidecar::DSHSidecar>>;
 
@@ -70,6 +70,15 @@ pub fn run() {
                         }
                     }
                 });
+
+                // splash 仅作为简短品牌瞬间:启动后约 3s(或 sidecar 更早就绪)即显示
+                // 主窗口并关闭 splash。主窗口自身的 HarnessFrame 会继续显示 DSH 加载态。
+                let reveal_handle = app.handle().clone();
+                #[cfg(desktop)]
+                std::thread::spawn(move || {
+                    std::thread::sleep(std::time::Duration::from_secs(3));
+                    reveal_main(&reveal_handle);
+                });
             }
 
             #[cfg(desktop)]
@@ -78,4 +87,15 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running dsh-platform");
+}
+
+/// 显示主窗口并关闭 splash 启动窗口(幂等)。
+fn reveal_main(app: &AppHandle) {
+    if let Some(main) = app.get_webview_window("main") {
+        let _ = main.show();
+        let _ = main.set_focus();
+    }
+    if let Some(splash) = app.get_webview_window("splash") {
+        let _ = splash.hide();
+    }
 }

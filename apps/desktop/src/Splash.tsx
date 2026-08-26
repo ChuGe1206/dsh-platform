@@ -15,12 +15,15 @@ export default function Splash() {
       <svg className="splash__whale" viewBox="0 0 23.16 17.04" aria-hidden="true">
         <path fill="currentColor" d={WHALE_PATH} />
       </svg>
-      <svg className="splash__spray" viewBox="0 0 120 46" aria-hidden="true">
-        <circle cx="12" cy="30" r="3.2" />
-        <circle cx="30" cy="18" r="2.2" />
-        <circle cx="52" cy="34" r="2.8" />
-        <circle cx="78" cy="22" r="2" />
-        <circle cx="98" cy="32" r="2.6" />
+      <svg className="splash__spray" viewBox="0 0 140 48" aria-hidden="true">
+        <ellipse cx="44" cy="38" rx="36" ry="6" />
+        <ellipse cx="76" cy="42" rx="52" ry="7" />
+        <circle cx="14" cy="30" r="3" />
+        <circle cx="34" cy="18" r="2.4" />
+        <circle cx="60" cy="28" r="3" />
+        <circle cx="88" cy="20" r="2.2" />
+        <circle cx="112" cy="32" r="2.8" />
+        <circle cx="130" cy="24" r="2" />
       </svg>
 
       <div className="splash__glass">
