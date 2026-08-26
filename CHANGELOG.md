@@ -1,5 +1,11 @@
 # 变更日志（中文）
 
+## 2026-08-29 — 版本修改指南文档
+
+- 新增 `docs/VERSIONING.md`:版本号单一来源(`config/version.json`)+
+  `pnpm sync:version` 的完整操作步骤、app/dsh 字段用途、常见问题(含默认 store
+  损坏的处置)。`docs/RELEASING.md` 增加发布前 bump 版本指引。
+
 ## 2026-08-29 — splash 异形设计优化 + 启动切换修复
 
 - **splash 改为海浪异形半透明设计**：`clip-path` 裁出不规则海浪上沿 + 纯半透明渐变

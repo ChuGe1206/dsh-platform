@@ -10,6 +10,10 @@ git push origin v0.1.1    # 推送 tag → GitHub Actions release.yml 自动触�
 
 发布成功后：https://github.com/ChuGe1206/dsh-platform/releases/tag/v0.1.1
 
+> **发布前先 bump 版本**：改 `config/version.json` 的 `app`,然后
+> `pnpm sync:version` 统一所有 package.json / tauri.conf.json / Cargo.toml / version.rs。
+> 详见 [docs/VERSIONING.md](./VERSIONING.md)。tag 名与应用版本保持一致。
+
 ## 已知问题与处置（2026-08 实测记录）
 
 1. **网页（GitHub UI）手动创建的 tag 可能不触发 Actions**（Web UI 创建 ref
