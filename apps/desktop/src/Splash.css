@@ -1,4 +1,4 @@
-/* Splash — 透明窗口内的海浪异形场景。窗口之外透明,只有海浪+鲸鱼可见。 */
+/* Splash — 透明窗口内的"多层海浪"场景。窗口之外透明,只有海浪+鲸鱼可见。 */
 
 .splash {
   position: fixed;
@@ -8,55 +8,15 @@
   user-select: none;
 }
 
-/* 主浪:clip-path 裁出波浪峰(左高右缓),半透明渐变。 */
-.splash__glass {
+/* 情景 SVG:铺满窗口(viewBox 480x300,按比例 none 拉伸)。 */
+.splash__scene {
   position: absolute;
   inset: 0;
-  clip-path: path(
-    "M0 300 L0 150 C22 118 60 100 100 104 C136 108 156 130 200 134 C244 138 268 116 306 112 C350 108 398 128 480 150 L480 300 Z"
-  );
-  background: linear-gradient(172deg, rgba(216, 242, 255, 0.92) 0%, rgba(150, 205, 245, 0.66) 45%, rgba(72, 140, 208, 0.78) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -60px 80px -50px rgba(32, 82, 144, 0.5);
-  -webkit-app-region: drag;
+  width: 100%;
+  height: 100%;
 }
 
-/* 鲸鱼:完整画在浪之上,基座落于浪峰(不被浪裁切),呈跃出姿态。 */
-.splash__whale {
-  position: absolute;
-  left: 40px;
-  top: 30px;
-  width: 100px;
-  height: 74px;
-  color: #2f7fe0;
-  filter: drop-shadow(0 6px 12px rgba(31, 111, 224, 0.25));
-  transform: rotate(-12deg);
-  animation: splash-float 2.6s ease-in-out infinite;
-}
-
-/* 空气星光。 */
-.splash__sparkles {
-  position: absolute;
-  left: 24px;
-  top: 18px;
-  width: 200px;
-  height: 90px;
-  color: rgba(255, 255, 255, 0.85);
-  fill: rgba(255, 255, 255, 0.85);
-}
-
-/* 破水泡沫:鲸鱼基座处的泡沫丘 + 上溅水珠,与鲸鱼基座相接(不覆盖身体)。 */
-.splash__foam {
-  position: absolute;
-  left: 24px;
-  top: 92px;
-  width: 150px;
-  height: 40px;
-  color: rgba(255, 255, 255, 0.96);
-  fill: rgba(255, 255, 255, 0.96);
-  opacity: 0.98;
-}
-
-/* 品牌文案(居中于浪体)。 */
+/* 品牌文案(叠于浪体下方居中)。 */
 .splash__content {
   position: absolute;
   left: 0;
@@ -101,14 +61,5 @@
 @keyframes splash-spin {
   to {
     transform: rotate(360deg);
-  }
-}
-@keyframes splash-float {
-  0%,
-  100% {
-    transform: rotate(-12deg) translateY(0);
-  }
-  50% {
-    transform: rotate(-9deg) translateY(-6px);
   }
 }
