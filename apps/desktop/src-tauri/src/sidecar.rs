@@ -247,7 +247,7 @@ impl DSHSidecar {
     }
 }
 
-/// Repo root: `DSH_PLATFORM_REPO` env override, else `CARGO_MANIFEST_DIR/../..`.
+/// Repo root: `DSH_PLATFORM_REPO` env override, else `CARGO_MANIFEST_DIR/../../..`.
 fn repo_root() -> Option<PathBuf> {
     if let Ok(explicit) = std::env::var("DSH_PLATFORM_REPO") {
         if !explicit.trim().is_empty() {
@@ -255,7 +255,9 @@ fn repo_root() -> Option<PathBuf> {
         }
     }
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let dev_root = manifest.join("../..");
+    // src-tauri/../.. 只到 apps/desktop；仓库根需要再上两级上级… 一级：
+    // manifest = <root>/apps/desktop/src-tauri → ../../.. = <root>
+    let dev_root = manifest.join("../../..");
     if dev_root.exists() {
         Some(dev_root)
     } else {

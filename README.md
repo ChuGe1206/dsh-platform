@@ -78,6 +78,17 @@ node scripts/smoke-sidecar.mjs
 - `harness/`：DSH `dsh-v0.1.0-rc.8`（见 `HARNESS_UPSTREAM.md`）
 - 本仓库运行时依赖 `@deepseek-ai/dsh@0.1.1-rc.2`（npm，sidecar 回退路径），与 submodule 的 `apps/cli` 结构一致（`lib/bin.js`）
 
+## 验证记录（本机实测）
+
+| 项 | 结果 |
+| --- | --- |
+| DSH 启动（`pnpm tauri dev`） | ✅ 窗口 "DSH Platform" → sidecar 启动 → DSH Web UI（HTTP 200，标题 "DeepSeek Harness"） |
+| 插件注入 | ✅ desktop-bridge 每 5s 向原生桥 9527 上报 `POST /status`（`node scripts/smoke-sidecar.mjs` 自动断言）。说明：该 DSH 版本无 `/api/plugins` 端点（404），以桥流量作为插件激活证据 |
+| 桥接通信 | ✅ 原生桥 9527 健康检查 `{"healthy":true,"protocolVersion":1}`；通知路由到系统通知 |
+| 热重载 | ⚠️ 官方 web profile 的 `cordis.patch.yml` 显式 `- id: hmr / disabled: true`，插件热重载默认不生效；修改插件后重启 sidecar（`restart_sidecar` 命令 / 托盘"重启 DSH"） |
+| 代码质量 | ✅ `cargo check` / `cargo clippy`（0 警告）/ `cargo test`（3/3）/ TS 类型检查 24/24 |
+| DSH 零修改 | ✅ `git -C harness status/diff` 均为空 |
+
 ## 相关文档
 
 - DSH 官方仓库：https://github.com/deepseek-ai/deepseek-harness
