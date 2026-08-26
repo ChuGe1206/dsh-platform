@@ -1,5 +1,38 @@
 # 变更日志（中文）
 
+## 2026-08-29 — 前端 Vue → React 迁移 + 启动黑框修复
+
+- **前端框架 Vue 3 → React 18**：`packages/shared-ui`（3 组件 + 3 hooks）与
+  `apps/desktop`（App/TitleBar/HarnessFrame/useSidecar）从 Vue SFC/组合式函数转为
+  React TSX/hooks；`useTheme`/`useBridge`/`useDSH` 重写为 React hooks（返回纯值 +
+  setter，不再返回 ref）。移动/鸿蒙端 shell（mobile-android / mobile-ios /
+  harmonyos h5）同步转 React，保持 workspace 可构建。`theme.css`（设计 token +
+  全局 `.dsh-*` 工具类）为框架无关，保留。
+- 依赖调整：各前端 package.json 用 `react`/`react-dom`/`@types/react`/
+  `@vitejs/plugin-react` 替换 `vue`/`vue-tsc`/`@vitejs/plugin-vue`；vite.config 用
+  `plugin-react`，tsconfig 用 `jsx: react-jsx`。
+- **修复发布版 node 黑框**：`sidecar.rs` spawn DSH 子进程、`install_runtime` spawn
+  npm 均加 Windows `CREATE_NO_WINDOW`（`creation_flags(0x08000000)`）——发布版是
+  GUI 子系统，node/npm（控制台程序）默认会额外弹黑框；dev（debug）有控制台故不弹。
+
+## 2026-08-28 — 修复启动失败 / 卸载卡顿 / 应用图标（第 25+ 轮）
+
+- **修复发布形态启动失败（"cannot resolve dsh-platform repo root"）**：
+  `sidecar.rs` 的 `start()` 不再强制要求仓库根（`DSH_PLATFORM_REPO`）——此前
+  安装后 `CARGO_MANIFEST_DIR` 指向不存在的 CI/构建路径即直接报错。现在
+  `resolve_cli` / `resolve_overlay` 优先从「缓存运行时 / npm 全局 / dev 仓库」
+  解析；找不到时返回 `DSH CLI not found`，由前端既有引导 UI 触发在线安装
+  运行时（install_runtime）。同时为 overlay 增加"插件文件存在"校验，避免把
+  打包进安装包的绝对路径（仅开发机有效）传给 DSH loader。
+- **优化卸载卡顿（删除 node_modules 慢）**：`install_runtime` 的运行时改存到
+  系统缓存目录 `<cache_dir>/dsh-platform/runtime`（Windows 为 `%LOCALAPPDATA%`），
+  而非会被 NSIS 卸载器递归清空的 `app_data_dir`（`%APPDATA%\io.dsh.platform`）——
+  卸载时不再逐文件遍历巨型 node_modules。DSH_HOME（profiles）按用户选择仍保留在
+  `app_data_dir`。说明：钉子版 `tauri-build` 2.6.3 不支持 `deleteAppDataOnUninstall`
+  字段（新版 CLI 有、Rust crate 无；2.6.3 已是当前最新兼容 2.x），故采用缓存目录方案。
+- **应用图标改为 DeepSeek 黑鲸鱼**：以 `harness` ui-primitives 的 `FishLogo`
+  鲸鱼 SVG 渲染为应用图标（`icon.png` / `icon.ico`，`tauri icon` 生成全部尺寸）。
+
 ## 2026-08-27 — v0.1.x 发布闭环与版本规范（19-24 轮）
 
 - **v0.1.1 Release 发布成功**（run#6 全绿）：修复"网页建 tag 不触发 Actions"与

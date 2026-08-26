@@ -8,10 +8,12 @@
 
 > **发布运行时（最终方案，2026-08 落地）**：安装包保持轻薄（壳 + 协议 ≈2MB）。
 > sidecar 的 DSH CLI 按顺序解析（`sidecar.rs resolve_cli`）：
-> ① `DSH_PLATFORM_RUNTIME` 环境变量 → ② `<app_data_dir>/runtime`（发布形态首次
-> 引导：`install_runtime` 命令在线 `npm install @deepseek-ai/dsh@0.1.1-rc.2` 至
-> 数据目录）→ ③ **npm 全局安装**（`npm root -g`，用户手动 `npm -g install`
-> / `npx` 即属此路径，已实测 0.1.1-rc.2 可用）→ ④ 仓库 submodule/根依赖（dev）。
+> ① `DSH_PLATFORM_RUNTIME` 环境变量 → ② `<cache_dir>/dsh-platform/runtime`
+> （发布形态首次引导：`install_runtime` 命令在线 `npm install @deepseek-ai/dsh@0.1.1-rc.2`
+> 至系统缓存目录，Windows 为 `%LOCALAPPDATA%`；放在缓存目录而非 `app_data_dir`
+> 是为让 NSIS 卸载器不再遍历其中的巨型 node_modules）→ ③ **npm 全局安装**
+> （`npm root -g`，用户手动 `npm -g install` / `npx` 即属此路径，已实测 0.1.1-rc.2
+> 可用）→ ④ 仓库 submodule/根依赖（dev）。
 > 说明：DSH Node 全家桶体积远超 20MB 目标，因此不打包进安装包（架构决策），
 > 文档化取舍：①运行时在线安装（本方案，安装包最小）②完整运行时打包（接受
 > 体积超标）③依赖白名单精简（后续）。

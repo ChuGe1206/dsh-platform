@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 // Mobile Android shell — same shared-ui kit compiled into the Tauri mobile WebView.
 export default defineConfig({
   plugins: [
-    vue(),
+    react(),
     tsconfigPaths({
       // Limit discovery to this app's tsconfig: cargo resource copies under
       // src-tauri/target contain harness tsconfigs whose extends targets do

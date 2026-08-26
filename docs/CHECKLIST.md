@@ -10,7 +10,7 @@
 | 1.2 harness submodule = dsh-v0.1.0-rc.8 | ✅ 已建 | HARNESS_UPSTREAM.md；`git -C harness status` 为空 | ✅ |
 | 1.3 shared-bridge（protocol/types/client） | ✅ | `packages/shared-bridge/src/` 三文件 | ✅ |
 | 1.4 shared-dsh（sidecar/patch-loader/plugin-registry） | ✅ | `packages/shared-dsh/src/`（+remote-client） | ✅ |
-| 1.5 shared-ui（Vue3 + 主题 + useDSH + useBridge） | ✅ | `packages/shared-ui/src/` | ✅ |
+| 1.5 shared-ui（React + 主题 + useDSH + useBridge） | ✅ | `packages/shared-ui/src/` | ✅ |
 
 ## Phase 2 桌面端 MVP（必须完成）
 

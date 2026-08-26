@@ -15,7 +15,7 @@
 
 - **Monorepo**：pnpm workspace + turbo
 - **共享协议**：`packages/shared-bridge`（TypeScript，HTTP/WS 桥接）
-- **共享前端**：`packages/shared-ui`（Vue 3 + Vite，编译到各端 WebView）
+- **共享前端**：`packages/shared-ui`（React + Vite，编译到各端 WebView）
 - **共享 Node 集成**：`packages/shared-dsh`（sidecar / remote-client / patch-loader / plugin-registry）
 - **共享 Rust 库**：`packages/shared-rust`（桥接类型与 JSON 工具）
 
@@ -33,7 +33,7 @@ Tauri Rust → spawn sidecar (node harness/apps/cli/lib/bin.js web --host 127.0.
 ## 目录速览
 
 ```
-apps/desktop        桌面端（Tauri v2 + Vue 壳）
+apps/desktop        桌面端（Tauri v2 + React 壳）
 apps/mobile-*       Tauri Mobile 端
 apps/harmonyos      HarmonyOS NEXT 端（ArkTS + ArkWeb）
 packages/shared-*   共享协议 / 集成 / UI / Rust

@@ -1,9 +1,10 @@
 //! Desktop commands: sidecar lifecycle, window controls, dialogs, tray status.
 
+use crate::sidecar::dsh_runtime_dir;
 use crate::SidecarHandle;
 use serde::Serialize;
 use std::sync::Mutex;
-use tauri::{AppHandle, Emitter, Manager, State, WebviewWindow};
+use tauri::{AppHandle, Emitter, State, WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 
 #[derive(Debug, Clone, Serialize)]
@@ -39,13 +40,15 @@ pub async fn start_sidecar(app: AppHandle, state: State<'_, SidecarHandle>) -> R
 /// 在线安装 DSH 运行时（发布形态首次引导）。
 ///
 /// 安装包保持轻薄（壳 + 协议），DSH Node 依赖在首次启动时安装到
-/// `<app_data_dir>/runtime`（`npm install @deepseek-ai/dsh@<version>`，
+/// `<cache_dir>/dsh-platform/runtime`（`npm install @deepseek-ai/dsh@<version>`，
 /// `--prefix` 目标目录 + `--omit=dev`）。成功校验 `lib/bin.js` 存在。
 /// 需要机器上有 Node.js（npm）；无 Node 环境时提示安装。
+///
+/// 运行时放在缓存目录（不在卸载器清空的 `app_data_dir` 内），卸载时不会
+/// 反复遍历其中的 node_modules（卸载卡顿问题）。
 #[tauri::command]
 pub async fn install_runtime(app: AppHandle, version: Option<String>) -> Result<(), String> {
-    let data_dir = app.path().app_data_dir().map_err(|e| format!("app data dir: {e}"))?;
-    let runtime_dir = data_dir.join("runtime");
+    let runtime_dir = dsh_runtime_dir(&app)?;
     std::fs::create_dir_all(&runtime_dir).map_err(|e| format!("create runtime dir: {e}"))?;
 
     let npm_checked = std::env::var("DSH_PLATFORM_NPM")
@@ -65,9 +68,15 @@ pub async fn install_runtime(app: AppHandle, version: Option<String>) -> Result<
         "--no-fund".to_string(),
     ];
 
-    let output = std::process::Command::new(&npm_checked)
-        .args(&npm_args)
-        .env("npm_config_yes", "true")
+    let mut install_cmd = std::process::Command::new(&npm_checked);
+    install_cmd.args(&npm_args).env("npm_config_yes", "true");
+    // 发布版为 GUI 子系统;npm 是控制台程序,不设 CREATE_NO_WINDOW 会弹黑框。
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        install_cmd.creation_flags(0x0800_0000); // CREATE_NO_WINDOW
+    }
+    let output = install_cmd
         .output()
         .map_err(|err| format!("failed to run `{npm_checked}` (需要本机已安装 Node.js): {err}"))?;
 
@@ -95,9 +104,8 @@ pub async fn install_runtime(app: AppHandle, version: Option<String>) -> Result<
 /// 当前运行时状态（前端引导 UI 用）。
 #[tauri::command]
 pub fn runtime_status(app: AppHandle) -> Result<serde_json::Value, String> {
-    let data_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
-    let bin = data_dir
-        .join("runtime")
+    let runtime_dir = dsh_runtime_dir(&app)?;
+    let bin = runtime_dir
         .join("node_modules")
         .join("@deepseek-ai")
         .join("dsh")
@@ -105,7 +113,7 @@ pub fn runtime_status(app: AppHandle) -> Result<serde_json::Value, String> {
         .join("bin.js");
     Ok(serde_json::json!({
         "dshRuntimeInstalled": bin.exists(),
-        "runtimeDir": data_dir.join("runtime").to_string_lossy(),
+        "runtimeDir": runtime_dir.to_string_lossy(),
     }))
 }
 

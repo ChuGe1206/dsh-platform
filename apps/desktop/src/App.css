@@ -1,0 +1,127 @@
+/* Desktop shell styles (converted from the Vue SFC scoped blocks). */
+
+.shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--dsh-bg);
+  overflow: hidden;
+}
+
+/* ---- TitleBar ---- */
+.titlebar {
+  height: var(--dsh-titlebar-h);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 0 12px;
+  background: var(--dsh-bg-elevated);
+  border-bottom: 1px solid var(--dsh-border);
+  user-select: none;
+  flex-shrink: 0;
+}
+.titlebar--unfocused {
+  opacity: 0.85;
+}
+.titlebar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.titlebar__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dsh-accent);
+  box-shadow: 0 0 6px var(--dsh-accent);
+}
+.titlebar__app {
+  font-weight: 600;
+  font-size: 13px;
+}
+.titlebar__state {
+  font-size: 12px;
+  color: var(--dsh-text-secondary);
+}
+.titlebar__title {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: var(--dsh-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.titlebar__controls {
+  display: flex;
+  gap: 4px;
+}
+.titlebar__button {
+  width: 42px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--dsh-text-secondary);
+  border-radius: var(--dsh-radius-s);
+  cursor: pointer;
+}
+.titlebar__button:hover {
+  background: var(--dsh-bg-input);
+}
+.titlebar__button--close:hover {
+  background: var(--dsh-danger);
+  color: #fff;
+}
+
+/* ---- HarnessFrame ---- */
+.harness {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+.harness__frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--dsh-bg);
+}
+.harness__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--dsh-text-secondary);
+}
+.harness__spinner {
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--dsh-border);
+  border-top-color: var(--dsh-accent);
+  border-radius: 50%;
+  animation: harness-spin 1s linear infinite;
+}
+.harness__error {
+  color: var(--dsh-danger);
+  max-width: 480px;
+  text-align: center;
+  white-space: pre-wrap;
+}
+.harness__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.harness__hint {
+  font-size: 12px;
+  max-width: 420px;
+  text-align: center;
+}
+@keyframes harness-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

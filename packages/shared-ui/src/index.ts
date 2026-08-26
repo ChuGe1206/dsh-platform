@@ -1,18 +1,19 @@
 /**
- * @dsh-platform/shared-ui — shared Vue 3 UI kit.
+ * @dsh-platform/shared-ui — shared React UI kit.
  *
  * @packageDocumentation
  */
 import './styles/theme.css'
+import './components/components.css'
 
-export { default as Sidebar } from './components/Sidebar.vue'
-export { default as ChatPanel } from './components/ChatPanel.vue'
-export { default as Composer } from './components/Composer.vue'
+export { Sidebar } from './components/Sidebar'
+export { ChatPanel } from './components/ChatPanel'
+export { Composer } from './components/Composer'
 
-export * from './composables/useTheme'
-export * from './composables/useBridge'
-export * from './composables/useDSH'
+export { useTheme } from './hooks/useTheme'
+export { useBridge } from './hooks/useBridge'
+export { useDSH } from './hooks/useDSH'
 
-export type { UseThemeOptions, ThemeName } from './composables/useTheme'
-export type { UseBridgeReturn } from './composables/useBridge'
-export type { UseDSHOptions, UseDSHReturn } from './composables/useDSH'
+export type { ThemeName, UseThemeOptions } from './hooks/useTheme'
+export type { UseBridgeReturn } from './hooks/useBridge'
+export type { UseDSHOptions, UseDSHReturn } from './hooks/useDSH'

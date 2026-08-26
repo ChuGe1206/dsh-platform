@@ -1,0 +1,44 @@
+/* Mobile shell styles (converted from the mobile App.vue scoped block). */
+
+.mobile {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.mobile__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px var(--dsh-gap-m);
+  border-bottom: 1px solid var(--dsh-border);
+}
+.mobile__bar h1 {
+  font-size: 15px;
+  margin: 0;
+  flex: 1;
+}
+.mobile__connect {
+  display: flex;
+  gap: var(--dsh-gap-s);
+  padding: var(--dsh-gap-m);
+}
+.mobile__endpoint {
+  flex: 1;
+}
+.mobile__error {
+  color: var(--dsh-danger);
+  padding: 0 var(--dsh-gap-m);
+  margin: 0;
+}
+.mobile__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.mobile__chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

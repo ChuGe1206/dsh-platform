@@ -1,0 +1,47 @@
+/* Harmony H5 shell styles (converted from the h5 App.vue scoped block). */
+
+.harmony {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.harmony__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--dsh-gap-m);
+  border-bottom: 1px solid var(--dsh-border);
+}
+.harmony__bar h1 {
+  font-size: 15px;
+  margin: 0;
+}
+.harmony__connect {
+  display: flex;
+  gap: var(--dsh-gap-s);
+  padding: var(--dsh-gap-m);
+}
+.harmony__endpoint {
+  flex: 1;
+}
+.harmony__error {
+  color: var(--dsh-danger);
+  padding: 0 var(--dsh-gap-m);
+  margin: 0;
+}
+.harmony__nearby {
+  color: var(--dsh-text-secondary);
+  padding: 0 var(--dsh-gap-m);
+  margin: 0 0 8px;
+}
+.harmony__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.harmony__chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

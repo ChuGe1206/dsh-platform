@@ -10,7 +10,7 @@
 │                     共享层（各端复用）                        │
 │  packages/shared-bridge   线上协议 + BridgeClient（HTTP 桥）    │
 │  packages/shared-dsh      sidecar/overlay/registry/远程客户端   │
-│  packages/shared-ui       Vue3 UI 套件（组件/组合式函数/主题）   │
+│  packages/shared-ui       React UI 套件（组件/hooks/主题）　      │
 │  packages/shared-rust     Rust 侧线协议类型（与 TS 镜像）       │
 └──────────────┬──────────────────────────────┬────────────────┘
                │                              │

@@ -1,0 +1,115 @@
+/* Shared React UI kit component styles.
+   Global utilities (.dsh-button/.dsh-input/.dsh-textarea/.dsh-chip/.dsh-status-*) and
+   design tokens live in ../styles/theme.css; only component-private classes live here. */
+
+/* ---- Sidebar ---- */
+.dsh-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--dsh-bg-elevated);
+  border-right: 1px solid var(--dsh-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.dsh-sidebar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--dsh-gap-m);
+  border-bottom: 1px solid var(--dsh-border);
+}
+.dsh-sidebar__title {
+  font-weight: 600;
+}
+.dsh-sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--dsh-gap-s);
+  overflow-y: auto;
+  flex: 1;
+}
+.dsh-sidebar__item {
+  padding: 10px 12px;
+  border-radius: var(--dsh-radius-s);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dsh-sidebar__item:hover {
+  background: var(--dsh-bg-input);
+}
+.dsh-sidebar__item--active {
+  background: var(--dsh-bg-input);
+  outline: 1px solid var(--dsh-accent);
+}
+.dsh-sidebar__item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dsh-sidebar__item-time {
+  font-size: 11px;
+  color: var(--dsh-text-secondary);
+}
+.dsh-sidebar__empty {
+  padding: 20px 12px;
+  color: var(--dsh-text-secondary);
+}
+
+/* ---- ChatPanel ---- */
+.dsh-chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.dsh-chat-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--dsh-gap-m);
+  padding: var(--dsh-gap-m);
+  border-bottom: 1px solid var(--dsh-border);
+  min-height: 52px;
+}
+.dsh-chat-panel__title {
+  font-weight: 600;
+}
+.dsh-chat-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--dsh-gap-m);
+}
+.dsh-chat-panel__empty {
+  max-width: 480px;
+  margin: 48px auto;
+  text-align: center;
+  color: var(--dsh-text-secondary);
+}
+.dsh-chat-panel code {
+  background: var(--dsh-bg-input);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* ---- Composer ---- */
+.dsh-composer {
+  border-top: 1px solid var(--dsh-border);
+  padding: var(--dsh-gap-m);
+  background: var(--dsh-bg-elevated);
+}
+.dsh-composer__drop {
+  display: flex;
+  gap: var(--dsh-gap-s);
+  align-items: flex-end;
+}
+.dsh-composer__input {
+  flex: 1;
+  resize: none;
+}
+.dsh-composer__actions {
+  display: flex;
+  gap: var(--dsh-gap-s);
+}

@@ -101,10 +101,11 @@ impl DSHSidecar {
             }
         }
 
-        let repo_root = repo_root().ok_or("cannot resolve dsh-platform repo root (set DSH_PLATFORM_REPO)")?;
-
-        let cli = resolve_cli(&repo_root, app)?;
-        let overlay = resolve_overlay(&repo_root);
+        // 发布形态不依赖 `DSH_PLATFORM_REPO`：CLI 优先从缓存运行时
+        // （dsh_runtime_dir）、npm 全局解析，dev 仅作为最后回退；
+        // overlay 优先从安装包资源（resource_dir/config）、dev 仓库解析。
+        let cli = resolve_cli(app)?;
+        let overlay = resolve_overlay(app);
         let dsh_home = resolve_dsh_home(app)?;
         std::fs::create_dir_all(&dsh_home).map_err(|err| format!("failed to create DSH_HOME: {err}"))?;
 
@@ -132,6 +133,15 @@ impl DSHSidecar {
             .env("DSH_HOME", &dsh_home)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+
+        // 发布版是 GUI 子系统(无主控制台)。node 是控制台子系统程序,若不显式
+        // 用 CREATE_NO_WINDOW,子在 Windows 上会额外分配一个黑色控制台窗口。
+        // dev(debug)因主进程带控制台而不弹,release 才出现——这里统一屏蔽。
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            command.creation_flags(0x0800_0000); // CREATE_NO_WINDOW
+        }
 
         eprintln!("[sidecar] spawning {node} {args:?} (DSH_HOME={})", dsh_home.display());
 
@@ -249,7 +259,11 @@ impl DSHSidecar {
     }
 }
 
-/// Repo root: `DSH_PLATFORM_REPO` env override, else `CARGO_MANIFEST_DIR/../../..`.
+/// dev 仓库根：`DSH_PLATFORM_REPO` env override，否则 `CARGO_MANIFEST_DIR/../../..`。
+///
+/// 仅作为 dev 回退（CARGO_MANIFEST_DIR 是编译期常量，安装到其它机器后
+/// 指向不存在的 CI/构建路径）。发布形态由 resolve_cli / resolve_overlay
+/// 优先从 resource_dir / app_data_dir/runtime 解析，不再依赖这里。
 fn repo_root() -> Option<PathBuf> {
     if let Ok(explicit) = std::env::var("DSH_PLATFORM_REPO") {
         if !explicit.trim().is_empty() {
@@ -267,21 +281,26 @@ fn repo_root() -> Option<PathBuf> {
     }
 }
 
-/// Resolve the DSH CLI bin.js:
+/// Resolve the DSH CLI bin.js. 发布形态不再依赖 `DSH_PLATFORM_REPO`：
 ///  1. `DSH_PLATFORM_RUNTIME` env（测试/自定义）
-///  2. `<app_data_dir>/runtime/...`（发布形态在线运行时 install_runtime）
+///  2. `<cache_dir>/dsh-platform/runtime/...`（发布形态在线运行时 install_runtime）
 ///  3. npm 全局安装 `npm root -g`（用户手动 npm -g / npx 安装的 DSH）
 ///  4. dev: `<root>/harness/apps/cli/lib/bin.js`（submodule 构建输出）
 ///  5. dev: `<root>/node_modules/@deepseek-ai/dsh/lib/bin.js`（npm 回退）
-fn resolve_cli(root: &Path, app: &AppHandle) -> Result<String, String> {
+///
+/// 注意：打包资源 `runtime/harness/apps/cli` 只含 CLI 源码（无 node_modules），
+/// 不可直接运行，故不作为候选；安装包保持轻薄，运行时由 install_runtime
+/// 在线安装到缓存目录（见 `dsh_runtime_dir`），避免落入卸载器会清空的
+/// app_data_dir（其内 node_modules 正是卸载卡顿的根源）。
+fn resolve_cli(app: &AppHandle) -> Result<String, String> {
     let mut candidates: Vec<PathBuf> = Vec::new();
     if let Ok(env_runtime) = std::env::var("DSH_PLATFORM_RUNTIME") {
         if !env_runtime.trim().is_empty() {
             candidates.push(PathBuf::from(env_runtime).join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
         }
     }
-    if let Ok(data_dir) = app.path().app_data_dir() {
-        candidates.push(data_dir.join("runtime").join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+    if let Ok(runtime_dir) = dsh_runtime_dir(app) {
+        candidates.push(runtime_dir.join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
     }
     if let Ok(output) = Command::new("npm").args(["root", "-g"]).output() {
         if output.status.success() {
@@ -291,8 +310,10 @@ fn resolve_cli(root: &Path, app: &AppHandle) -> Result<String, String> {
             }
         }
     }
-    candidates.push(root.join("harness").join("apps").join("cli").join("lib").join("bin.js"));
-    candidates.push(root.join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+    if let Some(root) = repo_root() {
+        candidates.push(root.join("harness").join("apps").join("cli").join("lib").join("bin.js"));
+        candidates.push(root.join("node_modules").join("@deepseek-ai").join("dsh").join("lib").join("bin.js"));
+    }
 
     for candidate in &candidates {
         if candidate.exists() {
@@ -306,18 +327,65 @@ fn resolve_cli(root: &Path, app: &AppHandle) -> Result<String, String> {
 }
 
 /// Overlay: prefer the generated (absolute-path) overlay, fall back to the
-/// committed template for diagnostics.
-fn resolve_overlay(root: &Path) -> Option<PathBuf> {
-    let generated = root.join("config").join("desktop-overlay.generated.yml");
+/// committed template for diagnostics. 发布形态优先从安装包资源
+/// `<resource_dir>/config` 解析；dev 再回退到编译期仓库根。
+///
+/// 只有当 overlay 引用的插件文件在本地可解析时才返回，避免把
+/// `file:///E:/...` 这种打包进安装包的绝对路径（仅开发机有效）传给
+/// DSH loader 造成插件缺失、启动失败。
+fn resolve_overlay(app: &AppHandle) -> Option<PathBuf> {
+    if let Ok(resource_dir) = app.path().resource_dir() {
+        if let Some(found) = find_overlay(&resource_dir.join("config")) {
+            if overlay_plugins_resolvable(&found) {
+                return Some(found);
+            }
+        }
+    }
+    if let Some(root) = repo_root() {
+        if let Some(found) = find_overlay(&root.join("config")) {
+            if overlay_plugins_resolvable(&found) {
+                return Some(found);
+            }
+        }
+    }
+    None
+}
+
+fn find_overlay(config_dir: &Path) -> Option<PathBuf> {
+    let generated = config_dir.join("desktop-overlay.generated.yml");
     if generated.exists() {
         return Some(generated);
     }
-    let template = root.join("config").join("desktop-overlay.yml");
+    let template = config_dir.join("desktop-overlay.yml");
     if template.exists() {
         eprintln!("[sidecar] WARNING: using overlay template (relative refs) — run `pnpm prepare:harness` for absolute refs");
         return Some(template);
     }
     None
+}
+
+/// Heuristic: an overlay whose plugin refs are all `file:///` absolute paths
+/// that do not exist on this machine cannot be loaded — treat as unusable.
+/// Overlays without `file://` refs (relative-ref template) are assumed usable.
+fn overlay_plugins_resolvable(config_file: &Path) -> bool {
+    let Ok(content) = std::fs::read_to_string(config_file) else {
+        return false;
+    };
+    let mut file_refs = 0usize;
+    for segment in content.split("file:///").skip(1) {
+        let raw: String = segment
+            .chars()
+            .take_while(|c| !matches!(c, '"' | '\'' | '\n' | '\r' | ' '))
+            .collect();
+        if raw.is_empty() {
+            continue;
+        }
+        file_refs += 1;
+        if PathBuf::from(&raw).exists() {
+            return true;
+        }
+    }
+    file_refs == 0
 }
 
 /// Sidecar 专属 DSH_HOME：默认 `<app_data_dir>/dsh-home`。
@@ -335,4 +403,58 @@ fn resolve_dsh_home(app: &AppHandle) -> Result<PathBuf, String> {
         .app_data_dir()
         .map(|dir| dir.join("dsh-home"))
         .map_err(|err| format!("cannot resolve app data dir: {err}"))
+}
+
+/// 在线安装的 DSH 运行时根目录。
+///
+/// 放在系统缓存目录（Windows 为 `%LOCALAPPDATA%`，即 `cache_dir()`）而非
+/// `app_data_dir()`（Windows 为 `%APPDATA%\\io.dsh.platform`）——后者会被
+/// NSIS 卸载器递归清空，里面的巨型 node_modules 正是卸载卡顿的根源。
+/// 缓存目录不在卸载器的清理范围内，卸载时不再反复遍历这些文件。
+pub fn dsh_runtime_dir(app: &AppHandle) -> Result<PathBuf, String> {
+    app.path()
+        .cache_dir()
+        .map(|dir| dir.join("dsh-platform").join("runtime"))
+        .map_err(|err| format!("cannot resolve cache dir: {err}"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static OVERLAY_SEQ: AtomicUsize = AtomicUsize::new(0);
+
+    /// Write a fake overlay file to a unique temp path and return its path.
+    fn temp_overlay(content: &str) -> PathBuf {
+        let dir = std::env::temp_dir().join(format!("dsh-sidecar-test-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let n = OVERLAY_SEQ.fetch_add(1, Ordering::SeqCst);
+        let file = dir.join(format!("desktop-overlay-{n}.yml"));
+        fs::write(&file, content).unwrap();
+        file
+    }
+
+    #[test]
+    fn overlay_with_existing_file_ref_is_resolvable() {
+        // Reference a path that really exists (this crate's Cargo.toml).
+        let existing = std::env::current_dir().unwrap().join("Cargo.toml");
+        let url = format!("file:///{}", existing.to_string_lossy().replace('\\', "/"));
+        let overlay = temp_overlay(&format!("{{ \"name\": \"{url}\" }}"));
+        assert!(overlay_plugins_resolvable(&overlay));
+    }
+
+    #[test]
+    fn overlay_with_missing_file_ref_is_not_resolvable() {
+        let overlay = temp_overlay(r#"{ "name": "file:///Z:/definitely/not/here/index.js" }"#);
+        assert!(!overlay_plugins_resolvable(&overlay));
+    }
+
+    #[test]
+    fn overlay_without_file_refs_is_resolvable() {
+        // Relative-ref template (no file:// absolute paths) is assumed usable.
+        let overlay = temp_overlay("- name: ./plugins/desktop-bridge/lib/index.js");
+        assert!(overlay_plugins_resolvable(&overlay));
+    }
 }

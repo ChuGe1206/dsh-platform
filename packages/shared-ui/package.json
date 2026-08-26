@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Shared Vue 3 UI kit compiled into every platform WebView (desktop / mobile / harmony).",
+  "description": "Shared React UI kit compiled into every platform WebView (desktop / mobile / harmony).",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -11,20 +11,23 @@
     "./theme.css": "./src/styles/theme.css"
   },
   "scripts": {
-    "build": "vue-tsc --noEmit -p tsconfig.json",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "build": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "dev": "vite --host 127.0.0.1 --port 5190"
   },
   "peerDependencies": {
-    "vue": "^3.5.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "dependencies": {
     "@dsh-platform/shared-bridge": "workspace:*"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.8.0",
-    "vue": "^3.5.13",
-    "vue-tsc": "^2.2.10"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
