@@ -1,5 +1,17 @@
 # 变更日志（中文）
 
+## 2026-08-27 — v0.1.x 发布闭环与版本规范（19-24 轮）
+
+- **v0.1.1 Release 发布成功**（run#6 全绿）：修复"网页建 tag 不触发 Actions"与
+  "同 SHA force 无效"事件问题（删除+重推 + API 确认）；发布资产 1.95MB
+- **版本规范落地**：三处版本（apps/desktop/package.json、tauri.conf.json、
+  Cargo.toml workspace.package）同步 0.1.1；RELEASING.md 记录"tag 前 bump 三处"
+- **一键验收工具**：scripts/acceptance.mjs（8 项：harness 零修改 / overlay 渲染 /
+  插件形态 / TS 24 包 / cargo test / clippy -D warnings / 端到端冒烟 / 结构完整性），
+  每轮全绿（8/8）
+- **交付对账表**：docs/CHECKLIST.md（Phase/验证标准/约束逐项：实现/证据/状态）
+- README：CI 与 Release 徽章 + 一键验收说明
+
 ## 2026-08-27 — v0.1.0 发布与运行引导（15-18 轮）
 
 - **发布运行时方案定型**：安装包保持轻薄（≈2MB）+ 三重运行时来源（`DSH_PLATFORM_RUNTIME` 环境变量 / `install_runtime` 在线引导至 app_data / npm 全局 `npm -g`）；`sidecar.rs resolve_cli` 五级候选链
